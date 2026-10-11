@@ -1,5 +1,323 @@
 [
   {
+    "id": "6hzrDeceEKc",
+    "title": "Oasis - Wonderwall (Official Video)",
+    "channel": "Oasis",
+    "duration": 279,
+    "thumbnail": "https://i.ytimg.com/vi_webp/6hzrDeceEKc/maxresdefault.webp",
+    "url": "https://www.youtube.com/watch?v=6hzrDeceEKc",
+    "originalUrl": "/media/6hzrDeceEKc_original.mp3",
+    "karaokeUrl": "/media/6hzrDeceEKc_karaoke.mp3",
+    "lyrics": {
+      "syncedLyrics": "[00:01.02]\n[00:23.09] Today is gonna be the day that they're gonna throw it back to you\n[00:28.33] And by now, you should've somehow realised what you gotta do\n[00:33.73] I don't believe that anybody feels the way I do about you now\n[00:40.27] \n[00:44.62] And backbeat, the word is on the street that the fire in your heart is out\n[00:50.46] I'm sure you've heard it all before, but you never really had a doubt\n[00:55.72] I don't believe that anybody feels the way I do about you now\n[01:02.34] \n[01:06.16] And all the roads we have to walk are winding\n[01:11.92] And all the lights that lead us there are blinding\n[01:17.83] There are many things that I would like to say to you, but I don't know how\n[01:24.61] \n[01:28.35] Because maybe\n[01:32.50] You're gonna be the one that saves me\n[01:37.85] And after all\n[01:40.09] \n[01:43.10] You're my wonderwall\n[01:47.74] \n[01:55.52] Today was gonna be the day, but they'll never throw it back to you\n[02:00.90] And by now, you should've somehow realised what you're not to do\n[02:05.84] I don't believe that anybody feels the way I do about you now\n[02:12.37] \n[02:16.75] And all the roads that lead you there were winding\n[02:22.24] And all the lights that light the way are blinding\n[02:27.75] There are many things that I would like to say to you, but I don't know how\n[02:35.14] \n[02:38.61] I said maybe\n[02:42.80] You're gonna be the one that saves me\n[02:45.24] \n[02:47.39] And after all\n[02:50.31] \n[02:52.74] You're my wonderwall\n[02:56.94] \n[03:00.36] I said maybe (I said maybe)\n[03:03.68] You're gonna be the one that saves me\n[03:10.12] And after all\n[03:13.02] \n[03:15.54] You're my wonderwall\n[03:19.40] \n[03:22.81] I said maybe (I said maybe)\n[03:26.97] You're gonna be the one that saves me (saves me)\n[03:32.50] You're gonna be the one that saves me (saves me)\n[03:37.92] You're gonna be the one that saves me (saves me)\n[03:42.02] ",
+      "plainLyrics": "\nToday is gonna be the day that they're gonna throw it back to you\nAnd by now, you should've somehow realised what you gotta do\nI don't believe that anybody feels the way I do about you now\n\nAnd backbeat, the word is on the street that the fire in your heart is out\nI'm sure you've heard it all before, but you never really had a doubt\nI don't believe that anybody feels the way I do about you now\n\nAnd all the roads we have to walk are winding\nAnd all the lights that lead us there are blinding\nThere are many things that I would like to say to you, but I don't know how\n\nBecause maybe\nYou're gonna be the one that saves me\nAnd after all\n\nYou're my wonderwall\n\nToday was gonna be the day, but they'll never throw it back to you\nAnd by now, you should've somehow realised what you're not to do\nI don't believe that anybody feels the way I do about you now\n\nAnd all the roads that lead you there were winding\nAnd all the lights that light the way are blinding\nThere are many things that I would like to say to you, but I don't know how\n\nI said maybe\nYou're gonna be the one that saves me\n\nAnd after all\n\nYou're my wonderwall\n\nI said maybe (I said maybe)\nYou're gonna be the one that saves me\nAnd after all\n\nYou're my wonderwall\n\nI said maybe (I said maybe)\nYou're gonna be the one that saves me (saves me)\nYou're gonna be the one that saves me (saves me)\nYou're gonna be the one that saves me (saves me)\n",
+      "parsed": [
+        {
+          "time": 23.09,
+          "text": "Today is gonna be the day that they're gonna throw it back to you"
+        },
+        {
+          "time": 28.33,
+          "text": "And by now, you should've somehow realised what you gotta do"
+        },
+        {
+          "time": 33.73,
+          "text": "I don't believe that anybody feels the way I do about you now"
+        },
+        {
+          "time": 44.62,
+          "text": "And backbeat, the word is on the street that the fire in your heart is out"
+        },
+        {
+          "time": 50.46,
+          "text": "I'm sure you've heard it all before, but you never really had a doubt"
+        },
+        {
+          "time": 55.72,
+          "text": "I don't believe that anybody feels the way I do about you now"
+        },
+        {
+          "time": 66.16,
+          "text": "And all the roads we have to walk are winding"
+        },
+        {
+          "time": 71.92,
+          "text": "And all the lights that lead us there are blinding"
+        },
+        {
+          "time": 77.83,
+          "text": "There are many things that I would like to say to you, but I don't know how"
+        },
+        {
+          "time": 88.35,
+          "text": "Because maybe"
+        },
+        {
+          "time": 92.5,
+          "text": "You're gonna be the one that saves me"
+        },
+        {
+          "time": 97.85,
+          "text": "And after all"
+        },
+        {
+          "time": 103.1,
+          "text": "You're my wonderwall"
+        },
+        {
+          "time": 115.52,
+          "text": "Today was gonna be the day, but they'll never throw it back to you"
+        },
+        {
+          "time": 120.9,
+          "text": "And by now, you should've somehow realised what you're not to do"
+        },
+        {
+          "time": 125.84,
+          "text": "I don't believe that anybody feels the way I do about you now"
+        },
+        {
+          "time": 136.75,
+          "text": "And all the roads that lead you there were winding"
+        },
+        {
+          "time": 142.24,
+          "text": "And all the lights that light the way are blinding"
+        },
+        {
+          "time": 147.75,
+          "text": "There are many things that I would like to say to you, but I don't know how"
+        },
+        {
+          "time": 158.61,
+          "text": "I said maybe"
+        },
+        {
+          "time": 162.8,
+          "text": "You're gonna be the one that saves me"
+        },
+        {
+          "time": 167.39,
+          "text": "And after all"
+        },
+        {
+          "time": 172.74,
+          "text": "You're my wonderwall"
+        },
+        {
+          "time": 180.36,
+          "text": "I said maybe (I said maybe)"
+        },
+        {
+          "time": 183.68,
+          "text": "You're gonna be the one that saves me"
+        },
+        {
+          "time": 190.12,
+          "text": "And after all"
+        },
+        {
+          "time": 195.54,
+          "text": "You're my wonderwall"
+        },
+        {
+          "time": 202.81,
+          "text": "I said maybe (I said maybe)"
+        },
+        {
+          "time": 206.97,
+          "text": "You're gonna be the one that saves me (saves me)"
+        },
+        {
+          "time": 212.5,
+          "text": "You're gonna be the one that saves me (saves me)"
+        },
+        {
+          "time": 217.92,
+          "text": "You're gonna be the one that saves me (saves me)"
+        }
+      ],
+      "source": "lrclib"
+    },
+    "hasSyncedLyrics": true,
+    "createdAt": 1791728255744
+  },
+  {
+    "id": "1k8craCGpgs",
+    "title": "Journey - Don't Stop Believin' (Official Audio)",
+    "channel": "journey",
+    "duration": 250,
+    "thumbnail": "https://i.ytimg.com/vi_webp/1k8craCGpgs/maxresdefault.webp",
+    "url": "https://www.youtube.com/watch?v=1k8craCGpgs",
+    "originalUrl": "/media/1k8craCGpgs_original.mp3",
+    "karaokeUrl": "/media/1k8craCGpgs_karaoke.mp3",
+    "lyrics": {
+      "syncedLyrics": "[00:18.75] Just a small town girl\n[00:22.43] Livin' in a lonely world\n[00:26.77] She took the midnight train going anywhere\n[00:35.17] Just a city boy\n[00:38.55] Born and raised in South Detroit\n[00:43.06] He took the midnight train going anywhere\n[00:50.35] \n[01:07.36] A singer in a smokey room\n[01:11.25] A smell of wine and cheap perfume\n[01:15.07] For a smile they can share the night\n[01:18.32] It goes on and on and on and on\n[01:22.69] Strangers waitin'\n[01:27.83] Up and down the boulevard\n[01:30.35] Their shadows searchin' in the night\n[01:38.64] Streetlights, people\n[01:43.88] Livin' just to find emotion\n[01:46.83] Hidin', somewhere in the night\n[01:56.39] \n[02:03.82] Workin' hard to get my fill\n[02:07.84] Everybody wants a thrill\n[02:11.70] Payin' anything to roll the dice\n[02:14.98] Just one more time\n[02:19.37] Some'll win, some will lose\n[02:23.52] Some are born to sing the blues\n[02:27.33] Whoa, the movie never ends\n[02:30.32] It goes on and on and on and on\n[02:34.71] Strangers waitin'\n[02:39.70] Up and down the boulevard\n[02:42.61] Their shadows searchin' in the night\n[02:50.53] Streetlights, people\n[02:55.57] Livin' just to find emotion\n[02:58.75] Hidin', somewhere in the night\n[03:08.20] \n[03:23.22] Don't stop believin'\n[03:27.62] Hold on to that feelin'\n[03:30.78] Streetlights, people\n[03:35.54] \n[03:38.69] Don't stop believin'\n[03:43.50] Hold on\n[03:46.53] Streetlights, people\n[03:51.44] \n[03:54.66] Don't stop believin'\n[03:59.26] Hold on to that feelin'\n[04:02.79] Streetlights, people\n[04:08.70] ",
+      "plainLyrics": "Just a small town girl\nLivin' in a lonely world\nShe took the midnight train going anywhere\nJust a city boy\nBorn and raised in South Detroit\nHe took the midnight train going anywhere\n\nA singer in a smokey room\nA smell of wine and cheap perfume\nFor a smile they can share the night\nIt goes on and on and on and on\n\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin', somewhere in the night\n\nWorkin' hard to get my fill\nEverybody wants a thrill\nPayin' anything to roll the dice\nJust one more time\n\nSome'll win, some will lose\nSome are born to sing the blues\nWhoa, the movie never ends\nIt goes on and on and on and on\n\nStrangers waitin'\nUp and down the boulevard\nTheir shadows searchin' in the night\nStreetlights, people\nLivin' just to find emotion\nHidin', somewhere in the night\n\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people\n\nDon't stop believin'\nHold on\nStreetlights, people\n\nDon't stop believin'\nHold on to that feelin'\nStreetlights, people",
+      "parsed": [
+        {
+          "time": 18.75,
+          "text": "Just a small town girl"
+        },
+        {
+          "time": 22.43,
+          "text": "Livin' in a lonely world"
+        },
+        {
+          "time": 26.77,
+          "text": "She took the midnight train going anywhere"
+        },
+        {
+          "time": 35.17,
+          "text": "Just a city boy"
+        },
+        {
+          "time": 38.55,
+          "text": "Born and raised in South Detroit"
+        },
+        {
+          "time": 43.06,
+          "text": "He took the midnight train going anywhere"
+        },
+        {
+          "time": 67.36,
+          "text": "A singer in a smokey room"
+        },
+        {
+          "time": 71.25,
+          "text": "A smell of wine and cheap perfume"
+        },
+        {
+          "time": 75.07,
+          "text": "For a smile they can share the night"
+        },
+        {
+          "time": 78.32,
+          "text": "It goes on and on and on and on"
+        },
+        {
+          "time": 82.69,
+          "text": "Strangers waitin'"
+        },
+        {
+          "time": 87.83,
+          "text": "Up and down the boulevard"
+        },
+        {
+          "time": 90.35,
+          "text": "Their shadows searchin' in the night"
+        },
+        {
+          "time": 98.64,
+          "text": "Streetlights, people"
+        },
+        {
+          "time": 103.88,
+          "text": "Livin' just to find emotion"
+        },
+        {
+          "time": 106.83,
+          "text": "Hidin', somewhere in the night"
+        },
+        {
+          "time": 123.82,
+          "text": "Workin' hard to get my fill"
+        },
+        {
+          "time": 127.84,
+          "text": "Everybody wants a thrill"
+        },
+        {
+          "time": 131.7,
+          "text": "Payin' anything to roll the dice"
+        },
+        {
+          "time": 134.98,
+          "text": "Just one more time"
+        },
+        {
+          "time": 139.37,
+          "text": "Some'll win, some will lose"
+        },
+        {
+          "time": 143.52,
+          "text": "Some are born to sing the blues"
+        },
+        {
+          "time": 147.33,
+          "text": "Whoa, the movie never ends"
+        },
+        {
+          "time": 150.32,
+          "text": "It goes on and on and on and on"
+        },
+        {
+          "time": 154.71,
+          "text": "Strangers waitin'"
+        },
+        {
+          "time": 159.7,
+          "text": "Up and down the boulevard"
+        },
+        {
+          "time": 162.61,
+          "text": "Their shadows searchin' in the night"
+        },
+        {
+          "time": 170.53,
+          "text": "Streetlights, people"
+        },
+        {
+          "time": 175.57,
+          "text": "Livin' just to find emotion"
+        },
+        {
+          "time": 178.75,
+          "text": "Hidin', somewhere in the night"
+        },
+        {
+          "time": 203.22,
+          "text": "Don't stop believin'"
+        },
+        {
+          "time": 207.62,
+          "text": "Hold on to that feelin'"
+        },
+        {
+          "time": 210.78,
+          "text": "Streetlights, people"
+        },
+        {
+          "time": 218.69,
+          "text": "Don't stop believin'"
+        },
+        {
+          "time": 223.5,
+          "text": "Hold on"
+        },
+        {
+          "time": 226.53,
+          "text": "Streetlights, people"
+        },
+        {
+          "time": 234.66,
+          "text": "Don't stop believin'"
+        },
+        {
+          "time": 239.26,
+          "text": "Hold on to that feelin'"
+        },
+        {
+          "time": 242.79,
+          "text": "Streetlights, people"
+        }
+      ],
+      "source": "lrclib"
+    },
+    "hasSyncedLyrics": true,
+    "createdAt": 1791727949149
+  },
+  {
     "id": "hwZNL7QVJjE",
     "title": "Ben E. King - Stand By Me (Audio)",
     "channel": "Soulful Sounds",

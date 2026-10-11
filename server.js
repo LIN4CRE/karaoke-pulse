@@ -10,7 +10,14 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/media', express.static(path.join(__dirname, 'media')));
+app.use('/media', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+}, express.static(path.join(__dirname, 'media')));
 
 const MEDIA_DIR = path.join(__dirname, 'media');
 const DATA_DIR = path.join(__dirname, 'data');

@@ -258,11 +258,16 @@ class KaraokeEngine {
 
     // Initial mix: 100% Karaoke, 0% Original
     this.updateVocalMix(0);
+    this.setMasterVolume(90);
   }
 
-  ensureAudioContext() {
+  async ensureAudioContext() {
     if (this.audioCtx && this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume();
+      try {
+        await this.audioCtx.resume();
+      } catch (e) {
+        console.warn('AudioContext resume deferred:', e);
+      }
     }
   }
 
@@ -847,7 +852,7 @@ class KaraokeEngine {
 
     // Reset playback
     this.pause();
-    this.seek(0);
+    this.updateScrubber();
     if (autoPlay) {
       this.play();
     }
@@ -938,41 +943,82 @@ class KaraokeEngine {
   }
 
   // 7. Playback Transport
-  play() {
-    this.ensureAudioContext();
-    const p1 = this.dom.karaokeAudio.play();
-    const p2 = this.dom.originalAudio.play();
+  async play() {
+    await this.ensureAudioContext();
 
-    Promise.all([p1, p2]).then(() => {
+    if (!this.dom.karaokeAudio.src) {
+      this.showToast('Please select a song from Top Hits or Search to play!', '🎵');
+      return;
+    }
+
+    try {
+      await this.dom.karaokeAudio.play();
       this.isPlaying = true;
       this.dom.playPauseIcon.textContent = '⏸';
       this.dom.vinylDisc.classList.add('spinning');
-    }).catch(err => {
-      console.warn('Audio play pending user interaction:', err);
-    });
+
+      // Attempt guide vocals in background if track has original audio
+      if (this.dom.originalAudio.src) {
+        try {
+          if (this.dom.karaokeAudio.readyState >= 1) {
+            this.dom.originalAudio.currentTime = this.dom.karaokeAudio.currentTime;
+          }
+          this.dom.originalAudio.play().catch(e => console.warn('Guide vocals pending:', e));
+        } catch (e) {}
+      }
+    } catch (err) {
+      console.warn('Playback gesture required or blocked:', err);
+      this.showToast('Click anywhere on the stage to start audio playback!', '▶️', 3000);
+    }
   }
 
   pause() {
-    this.dom.karaokeAudio.pause();
-    this.dom.originalAudio.pause();
+    try {
+      this.dom.karaokeAudio.pause();
+      this.dom.originalAudio.pause();
+    } catch (e) {}
     this.isPlaying = false;
     this.dom.playPauseIcon.textContent = '▶';
     this.dom.vinylDisc.classList.remove('spinning');
   }
 
-  togglePlay() {
+  async togglePlay() {
+    if (!this.currentTrack) {
+      // If no track loaded, load first song from library or catalog
+      const items = (this.libraryItems && this.libraryItems.length > 0) ? this.libraryItems : this.catalogData;
+      if (items && items.length > 0) {
+        const first = items[0];
+        if (first.karaokeUrl) {
+          this.loadTrack(first, true);
+        } else {
+          this.processTrack(`https://www.youtube.com/watch?v=${first.id || first.url}`, first.title);
+        }
+        return;
+      }
+      this.showToast('Please pick a song to begin!', '🎵');
+      return;
+    }
+
     if (this.isPlaying) {
       this.pause();
     } else {
-      this.play();
+      await this.play();
     }
   }
 
   seek(seconds) {
     const maxDur = this.dom.karaokeAudio.duration || 0;
     const clamped = Math.max(0, Math.min(seconds, maxDur));
-    this.dom.karaokeAudio.currentTime = clamped;
-    this.dom.originalAudio.currentTime = clamped;
+    try {
+      if (!isNaN(clamped) && this.dom.karaokeAudio.readyState >= 1) {
+        this.dom.karaokeAudio.currentTime = clamped;
+      }
+      if (!isNaN(clamped) && this.dom.originalAudio.readyState >= 1) {
+        this.dom.originalAudio.currentTime = clamped;
+      }
+    } catch (e) {
+      console.warn('Seek error avoided:', e);
+    }
     this.updateScrubber();
     this.updateLyrics(clamped);
   }
@@ -1448,6 +1494,7 @@ class KaraokeEngine {
       const res = await fetch('/api/library');
       const data = await res.json();
       const items = data.library || [];
+      this.libraryItems = items;
       this.renderLibrary(items);
       // Auto preload first song in library if no track is active
       if (!this.currentTrack && items.length > 0) {
