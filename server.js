@@ -72,18 +72,23 @@ console.log(`[Binaries] ffmpegDir: ${ffmpegDir}`);
 // Helper to clean video titles for lyrics search
 function cleanTitleForLyrics(rawTitle) {
   let cleaned = rawTitle
-    .replace(/\s*[\(\[](official\s*(music\s*)?video|audio|lyrics|hd|4k|remastered|remaster|visualizer|hq|live|karaoke|instrumental).*?[\)\]]/gi, '')
+    .replace(/\|.*$/g, '')
+    .replace(/\s*[\(\[](official\s*(music\s*)?video|audio|lyrics|hd|4k|remastered|remaster|visualizer|hq|live|karaoke|instrumental|ncs release|copyright free|free download).*?[\)\]]/gi, '')
     .replace(/\s*[\(\[].*?version[\)\]]/gi, '')
+    .replace(/feat\..*$/gi, '')
+    .replace(/ft\..*$/gi, '')
     .replace(/["'«»]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 
   const parts = cleaned.split(/\s+[-–—]\s+/);
   if (parts.length >= 2) {
+    const artist = parts[0].split(/[,&]/)[0].trim();
+    const track = parts.slice(1).join(' ').replace(/[\(\[].*?[\)\]]/g, '').trim();
     return {
-      artist: parts[0].trim(),
-      track: parts.slice(1).join(' ').trim(),
-      full: cleaned
+      artist,
+      track,
+      full: `${artist} ${track}`
     };
   }
 
@@ -91,49 +96,101 @@ function cleanTitleForLyrics(rawTitle) {
 }
 
 // Fetch synced lyrics from LRCLIB
-async function fetchLyrics(title, artist = '') {
+async function fetchLyrics(rawTitle, rawArtist = '') {
   try {
-    const cleaned = cleanTitleForLyrics(title);
-    const searchArtist = artist || cleaned.artist;
-    const searchTrack = cleaned.track;
+    const candidateQueries = [];
 
-    // 1. Try exact get if artist and track are parsed
+    const cleaned = cleanTitleForLyrics(rawTitle);
+    const searchArtist = (rawArtist || cleaned.artist || '').trim();
+    const searchTrack = (cleaned.track || '').trim();
+
+    // Strategy 1: Explicit artist & track if identified
     if (searchArtist && searchTrack) {
-      const getUrl = `https://lrclib.net/api/get?track_name=${encodeURIComponent(searchTrack)}&artist_name=${encodeURIComponent(searchArtist)}`;
-      try {
-        const res = await fetch(getUrl);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && (data.syncedLyrics || data.plainLyrics)) {
-            return {
-              syncedLyrics: data.syncedLyrics || null,
-              plainLyrics: data.plainLyrics || null,
-              trackName: data.trackName || searchTrack,
-              artistName: data.artistName || searchArtist,
-              source: 'lrclib'
-            };
-          }
-        }
-      } catch (e) {
-        console.warn('LRCLIB exact get failed, trying search fallback:', e.message);
+      candidateQueries.push({ artist: searchArtist, track: searchTrack, q: `${searchArtist} ${searchTrack}` });
+    }
+
+    // Strategy 2: Cleaned full title
+    if (cleaned.full) {
+      candidateQueries.push({ artist: '', track: cleaned.full, q: cleaned.full });
+    }
+
+    // Strategy 3: Channel + Title without parentheses
+    const noParen = rawTitle
+      .replace(/\|.*$/g, '')
+      .replace(/[\(\[].*?[\)\]]/g, ' ')
+      .replace(/["'«»]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (noParen) {
+      candidateQueries.push({ artist: '', track: noParen, q: noParen });
+      if (rawArtist) {
+        candidateQueries.push({ artist: rawArtist, track: noParen, q: `${rawArtist} ${noParen}` });
       }
     }
 
-    // 2. Try general search
-    const query = `${searchArtist} ${searchTrack}`.trim() || cleaned.full;
-    const searchUrl = `https://lrclib.net/api/search?q=${encodeURIComponent(query)}`;
-    const res = await fetch(searchUrl);
-    if (res.ok) {
-      const results = await res.json();
-      if (Array.isArray(results) && results.length > 0) {
-        const best = results.find(r => r.syncedLyrics) || results[0];
-        return {
-          syncedLyrics: best.syncedLyrics || null,
-          plainLyrics: best.plainLyrics || null,
-          trackName: best.trackName || query,
-          artistName: best.artistName || '',
-          source: 'lrclib'
-        };
+    // Strategy 4: Unwrapped parentheses keywords (e.g. "Manu Pilas (Original full v. Bella Ciao)")
+    const unwrapped = rawTitle
+      .replace(/\|.*$/g, '')
+      .replace(/[\(\[](?:original\s*(full\s*)?(version|v\.?)|full\s*version|official|ost|soundtrack)?\s*/gi, ' ')
+      .replace(/[\)\]]/g, ' ')
+      .replace(/["'«»]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (unwrapped && unwrapped !== noParen) {
+      candidateQueries.push({ artist: '', track: unwrapped, q: unwrapped });
+    }
+
+    // Deduplicate queries
+    const seenQueries = new Set();
+    const uniqueCandidates = candidateQueries.filter(c => {
+      const key = `${c.artist}___${c.track}___${c.q}`.toLowerCase();
+      if (seenQueries.has(key)) return false;
+      seenQueries.add(key);
+      return true;
+    });
+
+    for (const cand of uniqueCandidates) {
+      // 1. Try exact get if both artist and track exist
+      if (cand.artist && cand.track) {
+        try {
+          const getUrl = `https://lrclib.net/api/get?track_name=${encodeURIComponent(cand.track)}&artist_name=${encodeURIComponent(cand.artist)}`;
+          const res = await fetch(getUrl);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && (data.syncedLyrics || data.plainLyrics)) {
+              return {
+                syncedLyrics: data.syncedLyrics || null,
+                plainLyrics: data.plainLyrics || null,
+                trackName: data.trackName || cand.track,
+                artistName: data.artistName || cand.artist,
+                source: 'lrclib'
+              };
+            }
+          }
+        } catch (e) {}
+      }
+
+      // 2. Try search
+      if (cand.q) {
+        try {
+          const searchUrl = `https://lrclib.net/api/search?q=${encodeURIComponent(cand.q)}`;
+          const res = await fetch(searchUrl);
+          if (res.ok) {
+            const results = await res.json();
+            if (Array.isArray(results) && results.length > 0) {
+              const best = results.find(r => r.syncedLyrics) || results[0];
+              if (best && (best.syncedLyrics || best.plainLyrics)) {
+                return {
+                  syncedLyrics: best.syncedLyrics || null,
+                  plainLyrics: best.plainLyrics || null,
+                  trackName: best.trackName || cand.q,
+                  artistName: best.artistName || '',
+                  source: 'lrclib'
+                };
+              }
+            }
+          }
+        } catch (e) {}
       }
     }
   } catch (err) {

@@ -6,6 +6,7 @@ package-lock.json
 media/*.mp3
 media/*.vtt
 media/*.en.vtt
+media/*.json
 media/test_*
 bin/
 
