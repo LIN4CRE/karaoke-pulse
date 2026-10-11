@@ -15,6 +15,20 @@ class KaraokeEngine {
     this.catalogData = [];
     this.currentGenre = 'all';
 
+    // Party Queue & Playlist
+    this.queue = [];
+
+    // Live Singing Performance Scoring & Streak
+    this.singingScore = 0;
+    this.currentStreak = 0;
+    this.maxStreak = 0;
+    this.singingTicks = 0;
+
+    // Visualizer Styles & Theater Mode
+    this.visualizerStyle = 'bars'; // 'bars', 'wave', 'radial'
+    this.isTheaterMode = false;
+    this.voiceFxMode = 'studio';
+
     // Stage view modes: 'equalizer', 'vinyl'
     this.stageMode = 'equalizer';
 
@@ -171,7 +185,35 @@ class KaraokeEngine {
       sfxCheerBtn: document.getElementById('sfxCheerBtn'),
       sfxAirhornBtn: document.getElementById('sfxAirhornBtn'),
       sfxDrumrollBtn: document.getElementById('sfxDrumrollBtn'),
-      sfxSparkleBtn: document.getElementById('sfxSparkleBtn')
+      sfxSparkleBtn: document.getElementById('sfxSparkleBtn'),
+
+      // Visualizer Style & Theater Mode
+      visStyleBtn: document.getElementById('visStyleBtn'),
+      visStyleText: document.getElementById('visStyleText'),
+      theaterBtn: document.getElementById('theaterBtn'),
+
+      // Party Queue
+      queueBadge: document.getElementById('queueBadge'),
+      queueList: document.getElementById('queueList'),
+      clearQueueBtn: document.getElementById('clearQueueBtn'),
+
+      // Live Singing Score
+      liveScoreVal: document.getElementById('liveScoreVal'),
+      liveStreakBadge: document.getElementById('liveStreakBadge'),
+      scoreStars: document.getElementById('scoreStars'),
+      voiceFxSelect: document.getElementById('voiceFxSelect'),
+
+      // Performance Score Modal
+      scoreSummaryModal: document.getElementById('scoreSummaryModal'),
+      closeScoreModalBtn: document.getElementById('closeScoreModalBtn'),
+      scoreGradeBadge: document.getElementById('scoreGradeBadge'),
+      scoreTitleText: document.getElementById('scoreTitleText'),
+      finalScoreVal: document.getElementById('finalScoreVal'),
+      finalMaxStreakVal: document.getElementById('finalMaxStreakVal'),
+      finalPitchAccVal: document.getElementById('finalPitchAccVal'),
+      finalStarsDisplay: document.getElementById('finalStarsDisplay'),
+      singAgainBtn: document.getElementById('singAgainBtn'),
+      nextQueueBtn: document.getElementById('nextQueueBtn')
     };
 
     this.initAudioContext();
@@ -180,6 +222,7 @@ class KaraokeEngine {
     this.initConfetti();
     this.loadCatalog();
     this.loadLibrary();
+    this.renderQueue();
   }
 
   // 1. Initialize Web Audio Graph
@@ -335,7 +378,44 @@ class KaraokeEngine {
     this.dom.reverbVal.textContent = `${this.dom.reverbSlider.value}%`;
   }
 
-  // 3. Pitch Detection (Autocorrelation)
+  setVoiceFx(mode) {
+    this.voiceFxMode = mode;
+    if (!this.reverbDelay || !this.reverbFilter || !this.reverbFeedback) return;
+    const now = this.audioCtx.currentTime;
+
+    if (mode === 'studio') {
+      this.reverbDelay.delayTime.setValueAtTime(0.16, now);
+      this.reverbFeedback.gain.setValueAtTime(0.42, now);
+      this.reverbFilter.type = 'lowpass';
+      this.reverbFilter.frequency.setValueAtTime(3200, now);
+      this.updateReverbLevel();
+    } else if (mode === 'arena') {
+      this.reverbDelay.delayTime.setValueAtTime(0.38, now);
+      this.reverbFeedback.gain.setValueAtTime(0.68, now);
+      this.reverbFilter.type = 'lowpass';
+      this.reverbFilter.frequency.setValueAtTime(2400, now);
+      if (this.reverbGain) this.reverbGain.gain.setValueAtTime(0.75, now);
+    } else if (mode === 'echo') {
+      this.reverbDelay.delayTime.setValueAtTime(0.09, now);
+      this.reverbFeedback.gain.setValueAtTime(0.28, now);
+      this.reverbFilter.type = 'lowpass';
+      this.reverbFilter.frequency.setValueAtTime(4800, now);
+      if (this.reverbGain) this.reverbGain.gain.setValueAtTime(0.55, now);
+    } else if (mode === 'radio') {
+      this.reverbDelay.delayTime.setValueAtTime(0.02, now);
+      this.reverbFeedback.gain.setValueAtTime(0.12, now);
+      this.reverbFilter.type = 'bandpass';
+      this.reverbFilter.frequency.setValueAtTime(1600, now);
+      this.reverbFilter.Q.setValueAtTime(3.5, now);
+      if (this.reverbGain) this.reverbGain.gain.setValueAtTime(0.85, now);
+    } else if (mode === 'dry') {
+      if (this.reverbGain) this.reverbGain.gain.setValueAtTime(0, now);
+    }
+
+    this.showToast(`Voice FX: ${mode.toUpperCase()} active`, '🎙️', 1800);
+  }
+
+  // 3. Pitch Detection & Live Singing Scoring
   startPitchDetection() {
     const buffer = new Float32Array(2048);
 
@@ -352,6 +432,10 @@ class KaraokeEngine {
         if (this.dom.pitchRibbonMarker) {
           this.dom.pitchRibbonMarker.style.opacity = '0.35';
         }
+        if (this.isPlaying && this.currentLyricIndex >= 0 && this.currentStreak > 0) {
+          this.currentStreak = Math.max(0, this.currentStreak - 0.15);
+          this.updateScoreUI();
+        }
       } else {
         const midi = Math.round(12 * (Math.log2(pitch / 440)) + 69);
         const noteName = this.noteStrings[midi % 12];
@@ -367,12 +451,92 @@ class KaraokeEngine {
           const pct = Math.min(100, Math.max(0, ((curLog - minLog) / (maxLog - minLog)) * 100));
           this.dom.pitchRibbonMarker.style.left = `${pct}%`;
         }
+
+        // Real-time Singing Performance Score Accumulator
+        if (this.isPlaying && this.currentLyricIndex >= 0) {
+          this.singingTicks++;
+          this.currentStreak += 0.12;
+          const streakInt = Math.floor(this.currentStreak);
+          if (streakInt > this.maxStreak) this.maxStreak = streakInt;
+
+          const mult = 1 + Math.min(streakInt, 20) * 0.15;
+          this.singingScore += Math.round(12 * mult);
+          this.updateScoreUI();
+        }
       }
 
       requestAnimationFrame(checkPitch);
     };
 
     checkPitch();
+  }
+
+  updateScoreUI() {
+    if (!this.dom.liveScoreVal) return;
+    this.dom.liveScoreVal.textContent = this.singingScore.toLocaleString();
+    const streakInt = Math.floor(this.currentStreak);
+
+    if (this.dom.liveStreakBadge) {
+      if (streakInt >= 14) {
+        this.dom.liveStreakBadge.textContent = `🌟 ${streakInt}x SUPERSTAR!`;
+        this.dom.liveStreakBadge.className = 'streak-badge streak-super';
+      } else if (streakInt >= 6) {
+        this.dom.liveStreakBadge.textContent = `🔥 ${streakInt}x Hype Streak!`;
+        this.dom.liveStreakBadge.className = 'streak-badge streak-hype';
+      } else if (streakInt >= 1) {
+        this.dom.liveStreakBadge.textContent = `🎤 ${streakInt}x Streak`;
+        this.dom.liveStreakBadge.className = 'streak-badge';
+      } else {
+        this.dom.liveStreakBadge.textContent = 'Sing Now! 🎤';
+        this.dom.liveStreakBadge.className = 'streak-badge';
+      }
+    }
+
+    if (this.dom.scoreStars) {
+      if (this.singingScore >= 8000) this.dom.scoreStars.textContent = '⭐⭐⭐⭐⭐';
+      else if (this.singingScore >= 5000) this.dom.scoreStars.textContent = '⭐⭐⭐⭐☆';
+      else if (this.singingScore >= 2800) this.dom.scoreStars.textContent = '⭐⭐⭐☆☆';
+      else if (this.singingScore >= 1200) this.dom.scoreStars.textContent = '⭐⭐☆☆☆';
+      else if (this.singingScore > 100) this.dom.scoreStars.textContent = '⭐☆☆☆☆';
+      else this.dom.scoreStars.textContent = '☆☆☆☆☆';
+    }
+  }
+
+  showScoreSummaryModal() {
+    if (!this.dom.scoreSummaryModal) return;
+    const score = this.singingScore;
+
+    let grade = 'C';
+    let title = 'Good Warmup!';
+    let stars = '⭐⭐☆☆☆';
+
+    if (score >= 7500) {
+      grade = 'S';
+      title = '👑 Legendary Vocalist!';
+      stars = '⭐⭐⭐⭐⭐';
+    } else if (score >= 4500) {
+      grade = 'A';
+      title = '🌟 Fantastic Performance!';
+      stars = '⭐⭐⭐⭐☆';
+    } else if (score >= 2000) {
+      grade = 'B';
+      title = '🎤 Great Singing!';
+      stars = '⭐⭐⭐☆☆';
+    }
+
+    if (this.dom.scoreGradeBadge) this.dom.scoreGradeBadge.textContent = grade;
+    if (this.dom.scoreTitleText) this.dom.scoreTitleText.textContent = title;
+    if (this.dom.finalScoreVal) this.dom.finalScoreVal.textContent = score.toLocaleString();
+    if (this.dom.finalMaxStreakVal) this.dom.finalMaxStreakVal.textContent = `${this.maxStreak}x`;
+    if (this.dom.finalPitchAccVal) {
+      const energyPct = Math.min(99, Math.max(68, Math.round(75 + (score / 10000) * 24)));
+      this.dom.finalPitchAccVal.textContent = `${energyPct}%`;
+    }
+    if (this.dom.finalStarsDisplay) this.dom.finalStarsDisplay.textContent = stars;
+
+    this.dom.scoreSummaryModal.classList.remove('hidden');
+    this.triggerConfetti(160);
+    this.showToast(`Song complete! Grade: ${grade} (${score.toLocaleString()} pts)`, '🏆', 4000);
   }
 
   autoCorrelate(buf, sampleRate) {
@@ -497,8 +661,21 @@ class KaraokeEngine {
             <span class="card-badge-genre">${item.genre}</span>
           </div>
         </div>
-        <button class="card-sing-btn">Sing 🎤</button>
+        <div class="card-action-btns">
+          <button class="card-queue-btn" title="Add to Up Next Queue">+ Queue</button>
+          <button class="card-sing-btn">Sing 🎤</button>
+        </div>
       `;
+
+      card.querySelector('.card-queue-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.addToQueue({
+          id: item.id,
+          title: item.title,
+          artist: item.artist,
+          thumbnail: item.thumbnail
+        });
+      });
 
       card.addEventListener('click', () => {
         const url = `https://www.youtube.com/watch?v=${item.id}`;
@@ -507,6 +684,96 @@ class KaraokeEngine {
 
       this.dom.catalogList.appendChild(card);
     });
+  }
+
+  // Party Queue Methods
+  addToQueue(item) {
+    this.queue.push(item);
+    this.renderQueue();
+    this.showToast(`Added "${item.title}" to Up Next! 📋`, '✨');
+  }
+
+  removeFromQueue(idx) {
+    if (idx >= 0 && idx < this.queue.length) {
+      const removed = this.queue.splice(idx, 1)[0];
+      this.renderQueue();
+      this.showToast(`Removed "${removed.title}" from queue`, '🗑️');
+    }
+  }
+
+  clearQueue() {
+    this.queue = [];
+    this.renderQueue();
+    this.showToast('Up Next Queue cleared', '🧹');
+  }
+
+  renderQueue() {
+    if (this.dom.queueBadge) {
+      this.dom.queueBadge.textContent = this.queue.length;
+    }
+    if (!this.dom.queueList) return;
+
+    if (this.queue.length === 0) {
+      this.dom.queueList.innerHTML = `
+        <div class="empty-state">
+          <span class="empty-icon">📋</span>
+          <p>Queue is empty! Click <strong>"+ Queue"</strong> on any song to line it up for the party.</p>
+        </div>
+      `;
+      return;
+    }
+
+    this.dom.queueList.innerHTML = '';
+    this.queue.forEach((item, index) => {
+      const el = document.createElement('div');
+      el.className = 'queue-item-card';
+      el.innerHTML = `
+        <span class="queue-index-badge">#${index + 1}</span>
+        <img src="${item.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'}" class="queue-thumb" alt="${item.title}" />
+        <div class="queue-meta">
+          <div class="queue-title">${item.title}</div>
+          <div class="queue-artist">${item.artist || item.channel || 'Karaoke'}</div>
+        </div>
+        <div class="queue-actions">
+          <button class="queue-play-btn" title="Sing this now">Sing Now</button>
+          <button class="queue-del-btn" title="Remove from queue">&times;</button>
+        </div>
+      `;
+
+      el.querySelector('.queue-play-btn').addEventListener('click', () => {
+        this.queue.splice(index, 1);
+        this.renderQueue();
+        if (item.karaokeUrl) {
+          this.loadTrack(item);
+        } else if (item.url) {
+          this.processTrack(item.url, item.title);
+        } else if (item.id) {
+          this.processTrack(`https://www.youtube.com/watch?v=${item.id}`, `${item.artist} - ${item.title}`);
+        }
+      });
+
+      el.querySelector('.queue-del-btn').addEventListener('click', () => {
+        this.removeFromQueue(index);
+      });
+
+      this.dom.queueList.appendChild(el);
+    });
+  }
+
+  playNextInQueue() {
+    if (this.queue.length > 0) {
+      const next = this.queue.shift();
+      this.renderQueue();
+      if (next.karaokeUrl) {
+        this.loadTrack(next);
+      } else if (next.url) {
+        this.processTrack(next.url, next.title);
+      } else if (next.id) {
+        this.processTrack(`https://www.youtube.com/watch?v=${next.id}`, `${next.artist} - ${next.title}`);
+      }
+      return true;
+    }
+    return false;
   }
 
   // 6. Track Processing & Loading
@@ -570,6 +837,13 @@ class KaraokeEngine {
     }
 
     this.renderLyrics();
+
+    // Reset singing score
+    this.singingScore = 0;
+    this.currentStreak = 0;
+    this.maxStreak = 0;
+    this.singingTicks = 0;
+    this.updateScoreUI();
 
     // Reset playback
     this.pause();
@@ -816,32 +1090,102 @@ class KaraokeEngine {
 
       ctx.clearRect(0, 0, width, height);
 
-      const barCount = 48;
-      const barWidth = width / barCount;
-      const centerY = height;
+      if (this.visualizerStyle === 'wave') {
+        // Glowing Neon Oscilloscope Wave
+        const timeData = new Uint8Array(128);
+        this.analyser.getByteTimeDomainData(timeData);
 
-      for (let i = 0; i < barCount; i++) {
-        const val = freqData[i * 2] || 0;
-        const barHeight = (val / 255) * height * 0.75;
+        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = '#00f5d4';
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = '#00f5d4';
+        ctx.beginPath();
 
-        const x = i * barWidth;
-        const y = centerY - barHeight;
+        const sliceWidth = width / 128;
+        let x = 0;
+        for (let i = 0; i < 128; i++) {
+          const v = timeData[i] / 128.0;
+          const y = (v * height) / 2;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+          x += sliceWidth;
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      } else if (this.visualizerStyle === 'radial') {
+        // Radial Starburst Pulsing from center
+        const cx = width / 2;
+        const cy = height / 2;
+        const radius = Math.min(width, height) * 0.22;
+        const count = 36;
 
-        const grad = ctx.createLinearGradient(0, centerY, 0, y);
-        grad.addColorStop(0, 'rgba(247, 37, 133, 0.15)');
-        grad.addColorStop(0.5, 'rgba(114, 9, 183, 0.45)');
-        grad.addColorStop(1, 'rgba(0, 245, 212, 0.85)');
+        ctx.save();
+        ctx.translate(cx, cy);
 
-        ctx.fillStyle = grad;
-        ctx.fillRect(x + 2, y, barWidth - 4, barHeight);
+        for (let i = 0; i < count; i++) {
+          const angle = (i / count) * Math.PI * 2;
+          const val = freqData[i * 2] || 0;
+          const lineLen = (val / 255) * (radius * 1.3);
 
-        // Peak point
-        ctx.fillStyle = '#00f5d4';
-        ctx.fillRect(x + 2, y - 3, barWidth - 4, 2);
+          const x1 = Math.cos(angle) * radius;
+          const y1 = Math.sin(angle) * radius;
+          const x2 = Math.cos(angle) * (radius + lineLen);
+          const y2 = Math.sin(angle) * (radius + lineLen);
+
+          ctx.strokeStyle = `hsl(${(i / count) * 320}, 100%, 65%)`;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      } else {
+        // Neon Frequency Bars
+        const barCount = 48;
+        const barWidth = width / barCount;
+        const centerY = height;
+
+        for (let i = 0; i < barCount; i++) {
+          const val = freqData[i * 2] || 0;
+          const barHeight = (val / 255) * height * 0.75;
+
+          const x = i * barWidth;
+          const y = centerY - barHeight;
+
+          const grad = ctx.createLinearGradient(0, centerY, 0, y);
+          grad.addColorStop(0, 'rgba(247, 37, 133, 0.15)');
+          grad.addColorStop(0.5, 'rgba(114, 9, 183, 0.45)');
+          grad.addColorStop(1, 'rgba(0, 245, 212, 0.85)');
+
+          ctx.fillStyle = grad;
+          ctx.fillRect(x + 2, y, barWidth - 4, barHeight);
+
+          // Peak point
+          ctx.fillStyle = '#00f5d4';
+          ctx.fillRect(x + 2, y - 3, barWidth - 4, 2);
+        }
       }
     };
 
     draw();
+  }
+
+  cycleVisualizerStyle() {
+    const modes = ['bars', 'wave', 'radial'];
+    const idx = modes.indexOf(this.visualizerStyle);
+    this.visualizerStyle = modes[(idx + 1) % modes.length];
+
+    const labels = {
+      bars: 'Bars 📊',
+      wave: 'Wave 〰️',
+      radial: 'Starburst 💥'
+    };
+
+    if (this.dom.visStyleText) {
+      this.dom.visStyleText.textContent = labels[this.visualizerStyle];
+    }
+    this.showToast(`Visualizer: ${labels[this.visualizerStyle]}`, '✨', 1800);
   }
 
   // 10. Interactive Confetti Particle Engine
@@ -1140,8 +1484,16 @@ class KaraokeEngine {
             <span class="card-badge-lyrics">✓ Synced Lyrics Ready</span>
           </div>
         </div>
-        <button class="card-sing-btn">Sing 🎤</button>
+        <div class="card-action-btns">
+          <button class="card-queue-btn" title="Add to Up Next Queue">+ Queue</button>
+          <button class="card-sing-btn">Sing 🎤</button>
+        </div>
       `;
+
+      card.querySelector('.card-queue-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.addToQueue(item);
+      });
 
       card.addEventListener('click', () => {
         this.loadTrack(item);
@@ -1194,8 +1546,21 @@ class KaraokeEngine {
             <span class="card-badge-lyrics">✓ Synced Lyrics</span>
           </div>
         </div>
-        <button class="card-sing-btn">Sing 🎤</button>
+        <div class="card-action-btns">
+          <button class="card-queue-btn" title="Add to Up Next Queue">+ Queue</button>
+          <button class="card-sing-btn">Sing 🎤</button>
+        </div>
       `;
+
+      card.querySelector('.card-queue-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.addToQueue({
+          url: item.url,
+          title: item.title,
+          channel: item.channel,
+          thumbnail: item.thumbnail
+        });
+      });
 
       card.addEventListener('click', () => {
         this.processTrack(item.url, item.title);
@@ -1375,8 +1740,15 @@ class KaraokeEngine {
     this.dom.karaokeAudio.addEventListener('ended', () => {
       this.pause();
       this.seek(0);
-      this.showToast('Bravo! Song completed! 🎉', '👏', 4000);
-      this.triggerConfetti(150);
+      if (this.singingScore > 0 || this.isMicActive) {
+        this.showScoreSummaryModal();
+      } else {
+        this.showToast('Bravo! Song completed! 🎉', '👏', 4000);
+        this.triggerConfetti(150);
+        setTimeout(() => {
+          this.playNextInQueue();
+        }, 1200);
+      }
     });
 
     // Party SFX Soundboard Buttons
@@ -1406,10 +1778,15 @@ class KaraokeEngine {
       });
     });
 
-    // Microphone & Reverb
+    // Microphone, Reverb & Voice FX
     this.dom.micToggleBtn.addEventListener('click', () => this.toggleMicrophone());
     this.dom.micVolumeSlider.addEventListener('input', () => this.updateMicVolume());
     this.dom.reverbSlider.addEventListener('input', () => this.updateReverbLevel());
+    if (this.dom.voiceFxSelect) {
+      this.dom.voiceFxSelect.addEventListener('change', (e) => {
+        this.setVoiceFx(e.target.value);
+      });
+    }
 
     // Pitch & Speed
     let currentKey = 0;
@@ -1493,6 +1870,50 @@ class KaraokeEngine {
       this.dom.recordingModal.classList.add('hidden');
       this.dom.recordedAudioPlayer.pause();
     });
+
+    // Visualizer Style Switcher
+    if (this.dom.visStyleBtn) {
+      this.dom.visStyleBtn.addEventListener('click', () => this.cycleVisualizerStyle());
+    }
+
+    // Theater / Cinema Big Stage Mode
+    if (this.dom.theaterBtn) {
+      this.dom.theaterBtn.addEventListener('click', () => {
+        const isTheater = document.body.classList.toggle('theater-mode');
+        this.isTheaterMode = isTheater;
+        this.dom.theaterBtn.querySelector('.btn-text').textContent = isTheater ? 'Exit Stage' : 'Big Stage';
+        this.showToast(isTheater ? '📺 Big Stage Cinema mode activated!' : '🎛️ Standard studio view restored', '📺');
+      });
+    }
+
+    // Party Queue: Clear All
+    if (this.dom.clearQueueBtn) {
+      this.dom.clearQueueBtn.addEventListener('click', () => this.clearQueue());
+    }
+
+    // Performance Score Summary Modal Action Handlers
+    if (this.dom.closeScoreModalBtn) {
+      this.dom.closeScoreModalBtn.addEventListener('click', () => {
+        this.dom.scoreSummaryModal.classList.add('hidden');
+      });
+    }
+
+    if (this.dom.singAgainBtn) {
+      this.dom.singAgainBtn.addEventListener('click', () => {
+        this.dom.scoreSummaryModal.classList.add('hidden');
+        this.seek(0);
+        this.play();
+      });
+    }
+
+    if (this.dom.nextQueueBtn) {
+      this.dom.nextQueueBtn.addEventListener('click', () => {
+        this.dom.scoreSummaryModal.classList.add('hidden');
+        if (!this.playNextInQueue()) {
+          this.showToast('No more songs in queue! Add more from Top Hits or Search.', '📋');
+        }
+      });
+    }
 
     // Fullscreen Stage Mode
     this.dom.fullscreenBtn.addEventListener('click', () => {

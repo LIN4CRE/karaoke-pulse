@@ -65,6 +65,16 @@
           <span class="btn-text" id="stageModeText">Equalizer</span>
         </button>
 
+        <button id="visStyleBtn" class="pill-btn stage-view-btn" title="Cycle Visualizer Style: Bars, Wave, or Starburst">
+          <span class="btn-icon">📊</span>
+          <span class="btn-text" id="visStyleText">Bars</span>
+        </button>
+
+        <button id="theaterBtn" class="pill-btn theater-btn" title="Toggle Big Stage Cinema / TV Mode">
+          <span class="btn-icon">📺</span>
+          <span class="btn-text">Big Stage</span>
+        </button>
+
         <button id="fullscreenBtn" class="icon-btn" title="Fullscreen Stage Mode">
           ⛶
         </button>
@@ -72,14 +82,15 @@
     </header>
 
     <!-- Main Workspace -->
-    <main class="main-layout">
+    <main class="main-layout" id="mainLayout">
       <!-- Left: Song Finder Sidebar -->
-      <section class="sidebar-panel glass-panel">
+      <section class="sidebar-panel glass-panel" id="sidebarPanel">
         <div class="tab-nav">
-          <button class="tab-btn active" data-tab="catalogTab">🌟 Top Hits (Verified Lyrics)</button>
-          <button class="tab-btn" data-tab="searchTab">🔍 Search YouTube</button>
-          <button class="tab-btn" data-tab="urlTab">🔗 Paste URL</button>
-          <button class="tab-btn" data-tab="libraryTab">📚 My Library</button>
+          <button class="tab-btn active" data-tab="catalogTab">🌟 Top Hits</button>
+          <button class="tab-btn" data-tab="searchTab">🔍 Search</button>
+          <button class="tab-btn" data-tab="queueTab">📋 Up Next (<span id="queueBadge">0</span>)</button>
+          <button class="tab-btn" data-tab="urlTab">🔗 URL</button>
+          <button class="tab-btn" data-tab="libraryTab">📚 Library</button>
         </div>
 
         <!-- Tab 1: Curated Guaranteed Synced Lyrics Catalog -->
@@ -147,7 +158,24 @@
           </div>
         </div>
 
-        <!-- Tab 3: Paste URL -->
+        <!-- Tab 3: Party Queue / Up Next -->
+        <div id="queueTab" class="tab-pane">
+          <div class="queue-header-bar">
+            <div class="queue-info">
+              <h3>Party Up Next Queue</h3>
+              <p>Songs will play automatically one after another</p>
+            </div>
+            <button id="clearQueueBtn" class="pill-btn danger-outline" title="Clear all queued songs">Clear All</button>
+          </div>
+          <div id="queueList" class="results-list queue-list">
+            <div class="empty-state">
+              <span class="empty-icon">📋</span>
+              <p>Queue is empty! Click <strong>"+ Queue"</strong> on any song to line it up for the party.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Paste URL -->
         <div id="urlTab" class="tab-pane">
           <div class="url-input-card">
             <h3>Paste Any YouTube or YouTube Music Link</h3>
@@ -236,6 +264,16 @@
               <span class="ribbon-end">High</span>
             </div>
             <div class="pitch-status" id="pitchStatus">Mic inactive</div>
+          </div>
+
+          <!-- Live Singing Performance Score & Combo -->
+          <div class="stage-score-meter" id="stageScoreMeter" title="Sing into the mic to score points!">
+            <span class="score-label">Singing Score</span>
+            <div class="score-val" id="liveScoreVal">0</div>
+            <div class="streak-badge-row">
+              <span id="liveStreakBadge" class="streak-badge">Ready 🎤</span>
+            </div>
+            <div class="score-stars" id="scoreStars">☆☆☆☆☆</div>
           </div>
         </div>
 
@@ -369,6 +407,16 @@
                   <input type="range" id="reverbSlider" min="0" max="100" value="45" class="mini-slider">
                   <span id="reverbVal" class="mini-val">45%</span>
                 </div>
+                <div class="mini-slider-row">
+                  <span class="mini-label">Voice FX</span>
+                  <select id="voiceFxSelect" class="studio-select mini-select">
+                    <option value="studio" selected>Studio Reverb</option>
+                    <option value="arena">Stadium Arena</option>
+                    <option value="echo">Slapback Echo</option>
+                    <option value="radio">Vintage Radio</option>
+                    <option value="dry">Dry / Clean</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -415,6 +463,39 @@
           <div class="modal-actions">
             <button id="downloadRecordingBtn" class="primary-btn">⬇️ Download Your Take (.webm)</button>
             <button id="dismissModalBtn" class="secondary-btn">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Singing Performance Score Summary Modal (SingStar/Joysound Style) -->
+    <div id="scoreSummaryModal" class="modal-overlay hidden">
+      <div class="modal-card score-summary-card">
+        <div class="modal-header">
+          <h3>🏆 Vocal Performance Rating</h3>
+          <button id="closeScoreModalBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="trophy-badge" id="scoreGradeBadge">S</div>
+          <h2 id="scoreTitleText" class="score-title">Outstanding Vocalist!</h2>
+          <div class="score-numbers-grid">
+            <div class="score-stat-box">
+              <span class="stat-num" id="finalScoreVal">9,450</span>
+              <span class="stat-label">Final Score</span>
+            </div>
+            <div class="score-stat-box">
+              <span class="stat-num" id="finalMaxStreakVal">18x</span>
+              <span class="stat-label">Max Streak</span>
+            </div>
+            <div class="score-stat-box">
+              <span class="stat-num" id="finalPitchAccVal">95%</span>
+              <span class="stat-label">Singing Energy</span>
+            </div>
+          </div>
+          <div class="final-stars" id="finalStarsDisplay">⭐⭐⭐⭐⭐</div>
+          <div class="modal-actions center-actions">
+            <button id="singAgainBtn" class="primary-btn">🔁 Sing Again</button>
+            <button id="nextQueueBtn" class="secondary-btn">⏭ Play Next in Queue</button>
           </div>
         </div>
       </div>

@@ -1899,3 +1899,354 @@ body.party-mode .party-btn {
   color: var(--text-dim);
   text-align: center;
 }
+
+/* ================= Theater / Big Stage Kiosk Mode ================= */
+.theater-mode #sidebarPanel {
+  display: none !important;
+}
+
+.theater-mode .main-layout {
+  grid-template-columns: 1fr !important;
+}
+
+.theater-mode .lyrics-viewport {
+  min-height: 480px;
+}
+
+.theater-mode .lyric-line {
+  font-size: 2.2rem;
+  line-height: 1.6;
+}
+
+.theater-mode .lyric-line.active {
+  font-size: 2.8rem;
+}
+
+/* ================= Live Singing Performance Score Meter ================= */
+.stage-score-meter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-md);
+  padding: 6px 14px;
+  min-width: 130px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.stage-score-meter::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--neon-primary), var(--neon-accent));
+}
+
+.score-label {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.score-val {
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 12px var(--neon-primary);
+  line-height: 1.1;
+  transition: transform 0.1s ease;
+}
+
+.score-val.bump {
+  transform: scale(1.15);
+  color: var(--neon-accent);
+}
+
+.streak-badge-row {
+  margin: 2px 0;
+}
+
+.streak-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-dim);
+  transition: all 0.2s ease;
+}
+
+.streak-badge.streak-hype {
+  background: linear-gradient(90deg, #ff007f, #f72585);
+  color: #fff;
+  box-shadow: 0 0 8px rgba(255, 0, 127, 0.6);
+}
+
+.streak-badge.streak-super {
+  background: linear-gradient(90deg, #00f5d4, #4cc9f0);
+  color: #0d0f18;
+  font-weight: 900;
+  box-shadow: 0 0 10px rgba(0, 245, 212, 0.7);
+}
+
+.score-stars {
+  font-size: 0.82rem;
+  color: #ffd166;
+  letter-spacing: 1px;
+}
+
+/* ================= Party Queue / Up Next Playlist ================= */
+.queue-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.queue-info h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.queue-info p {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+.danger-outline {
+  border: 1px solid rgba(255, 75, 75, 0.4);
+  color: #ff6b6b;
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 14px;
+  background: rgba(255, 75, 75, 0.08);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.danger-outline:hover {
+  background: rgba(255, 75, 75, 0.2);
+  border-color: #ff6b6b;
+}
+
+.queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.queue-item-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  transition: all 0.2s ease;
+}
+
+.queue-item-card:hover {
+  border-color: var(--border-glow);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.queue-index-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--neon-primary);
+  width: 20px;
+  text-align: center;
+}
+
+.queue-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.queue-meta {
+  flex: 1;
+  overflow: hidden;
+}
+
+.queue-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.queue-artist {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.queue-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.queue-play-btn {
+  background: rgba(0, 245, 212, 0.15);
+  border: 1px solid var(--neon-primary);
+  color: var(--neon-primary);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.queue-play-btn:hover {
+  background: var(--neon-primary);
+  color: #000;
+}
+
+.queue-del-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.queue-del-btn:hover {
+  color: #ff6b6b;
+  background: rgba(255, 75, 75, 0.15);
+}
+
+/* Card Action Buttons: Sing Now vs + Queue */
+.card-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.card-queue-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  color: var(--text-dim);
+  padding: 5px 9px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.card-queue-btn:hover {
+  color: var(--neon-primary);
+  border-color: var(--neon-primary);
+  background: rgba(0, 245, 212, 0.12);
+}
+
+/* ================= Performance Rating Modal ================= */
+.score-summary-card {
+  max-width: 520px !important;
+  text-align: center;
+}
+
+.text-center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.trophy-badge {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd166, #ff007f);
+  box-shadow: 0 0 30px rgba(255, 209, 102, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #0d0f18;
+  margin: 8px auto 14px;
+  animation: bounce-badge 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bounce-badge {
+  0% { transform: scale(0.3) rotate(-20deg); opacity: 0; }
+  70% { transform: scale(1.15) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.score-title {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--neon-primary);
+  margin-bottom: 16px;
+}
+
+.score-numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.score-stat-box {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-num {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.final-stars {
+  font-size: 1.8rem;
+  color: #ffd166;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+}
+
+.center-actions {
+  justify-content: center !important;
+  width: 100%;
+}
