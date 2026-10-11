@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Local Media downloads & cache (keep repo lightweight!)
+media/*.mp3
+media/*.vtt
+media/*.en.vtt
+media/test_*
+bin/
+
+# OS files
+.DS_Store
+Thumbs.db

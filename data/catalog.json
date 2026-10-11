@@ -1,0 +1,281 @@
+[
+  {
+    "id": "fJ9rUzIMcZQ",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "genre": "Rock",
+    "durationString": "6:00",
+    "thumbnail": "https://i.ytimg.com/vi/fJ9rUzIMcZQ/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "1k8craCGpgs",
+    "title": "Don't Stop Believin'",
+    "artist": "Journey",
+    "genre": "Rock",
+    "durationString": "4:11",
+    "thumbnail": "https://i.ytimg.com/vi/1k8craCGpgs/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "lDK9QqIzhwk",
+    "title": "Livin' on a Prayer",
+    "artist": "Bon Jovi",
+    "genre": "Rock",
+    "durationString": "4:10",
+    "thumbnail": "https://i.ytimg.com/vi/lDK9QqIzhwk/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "1w7OgIMMRc4",
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "genre": "Rock",
+    "durationString": "5:03",
+    "thumbnail": "https://i.ytimg.com/vi/1w7OgIMMRc4/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "09839DpTctU",
+    "title": "Hotel California",
+    "artist": "Eagles",
+    "genre": "Rock",
+    "durationString": "6:30",
+    "thumbnail": "https://i.ytimg.com/vi/09839DpTctU/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "6hzrDeceEKc",
+    "title": "Wonderwall",
+    "artist": "Oasis",
+    "genre": "Rock",
+    "durationString": "4:38",
+    "thumbnail": "https://i.ytimg.com/vi/6hzrDeceEKc/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "gGdGFtwCNBE",
+    "title": "Mr. Brightside",
+    "artist": "The Killers",
+    "genre": "Rock",
+    "durationString": "3:48",
+    "thumbnail": "https://i.ytimg.com/vi/gGdGFtwCNBE/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "eVTXPUF4Oz4",
+    "title": "In the End",
+    "artist": "Linkin Park",
+    "genre": "Rock",
+    "durationString": "3:36",
+    "thumbnail": "https://i.ytimg.com/vi/eVTXPUF4Oz4/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "ic87S9NXXd4",
+    "title": "Cruel Summer",
+    "artist": "Taylor Swift",
+    "genre": "Pop",
+    "durationString": "2:58",
+    "thumbnail": "https://i.ytimg.com/vi/ic87S9NXXd4/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "rYEDA3JcQqw",
+    "title": "Rolling in the Deep",
+    "artist": "Adele",
+    "genre": "Pop",
+    "durationString": "3:53",
+    "thumbnail": "https://i.ytimg.com/vi/rYEDA3JcQqw/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "H5v3kku4y6Q",
+    "title": "As It Was",
+    "artist": "Harry Styles",
+    "genre": "Pop",
+    "durationString": "2:45",
+    "thumbnail": "https://i.ytimg.com/vi/H5v3kku4y6Q/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "G7KNmW9a75Y",
+    "title": "Flowers",
+    "artist": "Miley Cyrus",
+    "genre": "Pop",
+    "durationString": "3:20",
+    "thumbnail": "https://i.ytimg.com/vi/G7KNmW9a75Y/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "4NRXx6U8ABQ",
+    "title": "Blinding Lights",
+    "artist": "The Weeknd",
+    "genre": "Pop",
+    "durationString": "3:22",
+    "thumbnail": "https://i.ytimg.com/vi/4NRXx6U8ABQ/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "JGwWNGJdvx8",
+    "title": "Shape of You",
+    "artist": "Ed Sheeran",
+    "genre": "Pop",
+    "durationString": "4:24",
+    "thumbnail": "https://i.ytimg.com/vi/JGwWNGJdvx8/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "qrO4YZeyl0I",
+    "title": "Bad Romance",
+    "artist": "Lady Gaga",
+    "genre": "Pop",
+    "durationString": "5:08",
+    "thumbnail": "https://i.ytimg.com/vi/qrO4YZeyl0I/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "OPf0YbXqDm0",
+    "title": "Uptown Funk",
+    "artist": "Mark Ronson ft. Bruno Mars",
+    "genre": "Pop",
+    "durationString": "4:30",
+    "thumbnail": "https://i.ytimg.com/vi/OPf0YbXqDm0/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "TUVcZfQe-Kw",
+    "title": "Levitating",
+    "artist": "Dua Lipa",
+    "genre": "Pop",
+    "durationString": "3:23",
+    "thumbnail": "https://i.ytimg.com/vi/TUVcZfQe-Kw/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "mQR0bXO_yI8",
+    "title": "Fly Me to the Moon",
+    "artist": "Frank Sinatra",
+    "genre": "Classics",
+    "durationString": "2:27",
+    "thumbnail": "https://i.ytimg.com/vi/mQR0bXO_yI8/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "qQzdAsjWGPg",
+    "title": "My Way",
+    "artist": "Frank Sinatra",
+    "genre": "Classics",
+    "durationString": "4:36",
+    "thumbnail": "https://i.ytimg.com/vi/qQzdAsjWGPg/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "vGJTaP6anOU",
+    "title": "Can't Help Falling in Love",
+    "artist": "Elvis Presley",
+    "genre": "Classics",
+    "durationString": "3:02",
+    "thumbnail": "https://i.ytimg.com/vi/vGJTaP6anOU/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "QDYfEBY9NM4",
+    "title": "Let It Be",
+    "artist": "The Beatles",
+    "genre": "Classics",
+    "durationString": "4:03",
+    "thumbnail": "https://i.ytimg.com/vi/QDYfEBY9NM4/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "A_MjCqQoLLA",
+    "title": "Hey Jude",
+    "artist": "The Beatles",
+    "genre": "Classics",
+    "durationString": "7:08",
+    "thumbnail": "https://i.ytimg.com/vi/A_MjCqQoLLA/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "hwZNL7QVJjE",
+    "title": "Stand By Me",
+    "artist": "Ben E. King",
+    "genre": "Classics",
+    "durationString": "3:01",
+    "thumbnail": "https://i.ytimg.com/vi/hwZNL7QVJjE/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "YkgkTh3VY88",
+    "title": "Imagine",
+    "artist": "John Lennon",
+    "genre": "Classics",
+    "durationString": "3:53",
+    "thumbnail": "https://i.ytimg.com/vi/YkgkTh3VY88/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "eH3GIQR454g",
+    "title": "I Wanna Dance with Somebody",
+    "artist": "Whitney Houston",
+    "genre": "Party 80s/90s",
+    "durationString": "4:52",
+    "thumbnail": "https://i.ytimg.com/vi/eH3GIQR454g/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "dQw4w9WgXcQ",
+    "title": "Never Gonna Give You Up",
+    "artist": "Rick Astley",
+    "genre": "Party 80s/90s",
+    "durationString": "3:33",
+    "thumbnail": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "djV11Xbc914",
+    "title": "Take On Me",
+    "artist": "a-ha",
+    "genre": "Party 80s/90s",
+    "durationString": "3:47",
+    "thumbnail": "https://i.ytimg.com/vi/djV11Xbc914/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "xFrGuyw1Vm8",
+    "title": "Dancing Queen",
+    "artist": "ABBA",
+    "genre": "Party 80s/90s",
+    "durationString": "3:51",
+    "thumbnail": "https://i.ytimg.com/vi/xFrGuyw1Vm8/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "4fndeDfaWCg",
+    "title": "I Want It That Way",
+    "artist": "Backstreet Boys",
+    "genre": "Party 80s/90s",
+    "durationString": "3:39",
+    "thumbnail": "https://i.ytimg.com/vi/4fndeDfaWCg/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "gJLIiF15wjQ",
+    "title": "Wannabe",
+    "artist": "Spice Girls",
+    "genre": "Party 80s/90s",
+    "durationString": "2:52",
+    "thumbnail": "https://i.ytimg.com/vi/gJLIiF15wjQ/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  },
+  {
+    "id": "Zi_XLOBDo_Y",
+    "title": "Billie Jean",
+    "artist": "Michael Jackson",
+    "genre": "Party 80s/90s",
+    "durationString": "4:55",
+    "thumbnail": "https://i.ytimg.com/vi/Zi_XLOBDo_Y/hqdefault.jpg",
+    "hasSyncedLyrics": true
+  }
+]
