@@ -50,9 +50,19 @@
           <span class="btn-text">Record Take</span>
         </button>
 
+        <button id="partyModeBtn" class="pill-btn party-btn" title="Toggle Clean Party Mode">
+          <span class="btn-icon">🎉</span>
+          <span class="btn-text">Party Mode</span>
+        </button>
+
+        <button id="helpBtn" class="pill-btn help-btn" title="How to Use KaraokePulse">
+          <span class="btn-icon">💡</span>
+          <span class="btn-text">Guide</span>
+        </button>
+
         <button id="stageModeBtn" class="pill-btn stage-view-btn" title="Toggle Backdrop Visualizer Mode">
           <span class="btn-icon">✨</span>
-          <span class="btn-text" id="stageModeText">Visualizer: Equalizer</span>
+          <span class="btn-text" id="stageModeText">Equalizer</span>
         </button>
 
         <button id="fullscreenBtn" class="icon-btn" title="Fullscreen Stage Mode">
@@ -404,6 +414,53 @@
         </div>
       </div>
     </div>
+
+    <!-- Quick Guide Modal (Zero Coding Needed!) -->
+    <div id="helpModal" class="modal-overlay hidden">
+      <div class="modal-card help-modal-card">
+        <div class="modal-header">
+          <h3>🎤 How to Use KaraokePulse in 4 Easy Steps</h3>
+          <button id="closeHelpModalBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="guide-steps-grid">
+            <div class="guide-step-card">
+              <span class="step-num">1</span>
+              <div class="step-icon">🎵</div>
+              <h4>Pick Any Song</h4>
+              <p>Click any song from <strong>Top Hits</strong> on the left, or type any artist in <strong>Search YouTube</strong>. Songs with lyrics are marked with green badges.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-num">2</span>
+              <div class="step-icon">🎙️</div>
+              <h4>Turn On Your Mic</h4>
+              <p>Click <strong>Mic: Off</strong> in the top header. Your voice plays live through the speakers with authentic karaoke echo! <em>(Headphones recommended to avoid feedback)</em>.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-num">3</span>
+              <div class="step-icon">✨</div>
+              <h4>Adjust Vocals</h4>
+              <p>Want only instruments? Leave <strong>Vocal Reducer</strong> at <code>0%</code>. Want backup singers to help you? Slide to <code>25%</code> for Guide Vocals.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-num">4</span>
+              <div class="step-icon">🔴</div>
+              <h4>Record Your Take</h4>
+              <p>Click <strong>Record Take</strong> to record your voice singing over the track. When you finish, listen back and download your performance!</p>
+            </div>
+          </div>
+          <div class="guide-shortcuts-bar">
+            <span>⌨️ <strong>Keyboard Shortcuts:</strong> Spacebar = Play/Pause &bull; Left/Right Arrows = Skip 5s &bull; Click any lyric to jump</span>
+          </div>
+          <div class="modal-actions">
+            <button id="gotItBtn" class="primary-btn">Let's Sing! 🎤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Toast Notification System -->
+    <div id="toastContainer" class="toast-container"></div>
 
     <!-- Hidden audio elements -->
     <audio id="karaokeAudio" preload="auto"></audio>

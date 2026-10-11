@@ -54,9 +54,17 @@ class KaraokeEngine {
 
       // Theme & Header
       themeSelect: document.getElementById('themeSelect'),
+      partyModeBtn: document.getElementById('partyModeBtn'),
+      helpBtn: document.getElementById('helpBtn'),
       stageModeBtn: document.getElementById('stageModeBtn'),
       stageModeText: document.getElementById('stageModeText'),
       fullscreenBtn: document.getElementById('fullscreenBtn'),
+
+      // Guide Modal & Toasts
+      helpModal: document.getElementById('helpModal'),
+      closeHelpModalBtn: document.getElementById('closeHelpModalBtn'),
+      gotItBtn: document.getElementById('gotItBtn'),
+      toastContainer: document.getElementById('toastContainer'),
 
       // Tabs & Navigation
       tabBtns: document.querySelectorAll('.tab-btn'),
@@ -205,6 +213,19 @@ class KaraokeEngine {
     }
   }
 
+  showToast(message, icon = '✨', duration = 3500) {
+    if (!this.dom.toastContainer) return;
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span class="toast-icon">${icon}</span><span>${message}</span>`;
+    this.dom.toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('toast-hide');
+      setTimeout(() => toast.remove(), 350);
+    }, duration);
+  }
+
   // 2. Microphone & Reverb Setup
   async toggleMicrophone() {
     this.ensureAudioContext();
@@ -283,9 +304,10 @@ class KaraokeEngine {
       this.dom.micToggleBtn.querySelector('.btn-text').textContent = 'Mic: Live 🎤';
       this.dom.micStatusText.textContent = 'Live';
       this.dom.pitchStatus.textContent = 'Listening...';
+      this.showToast('Microphone live with karaoke reverb!', '🎙️');
     } catch (err) {
       console.error('Microphone access denied:', err);
-      alert('Could not access microphone: ' + err.message);
+      this.showToast('Could not access microphone: ' + err.message, '⚠️');
     }
   }
 
@@ -487,9 +509,13 @@ class KaraokeEngine {
       console.log('Processed track ready:', track);
       this.loadTrack(track);
       this.loadLibrary();
+      this.showToast(`✨ "${track.title}" loaded! Have fun!`, '🎤');
+      if (window.innerWidth < 1100) {
+        document.getElementById('lyricsStage').scrollIntoView({ behavior: 'smooth' });
+      }
     } catch (err) {
       console.error('Track processing error:', err);
-      alert('Error loading YouTube track: ' + err.message);
+      this.showToast('Could not load track: ' + err.message, '⚠️');
     } finally {
       this.showProcessing(false);
     }
@@ -713,6 +739,7 @@ class KaraokeEngine {
         const audioUrl = URL.createObjectURL(blob);
         this.dom.recordedAudioPlayer.src = audioUrl;
         this.dom.recordingModal.classList.remove('hidden');
+        this.showToast('Take recorded! Listen back or download.', '🎉');
 
         this.dom.downloadRecordingBtn.onclick = () => {
           const a = document.createElement('a');
@@ -726,13 +753,14 @@ class KaraokeEngine {
       this.isRecording = true;
       this.dom.recordToggleBtn.classList.add('recording');
       this.dom.recordToggleBtn.querySelector('.btn-text').textContent = '⏹ Stop Take';
+      this.showToast('Recording started! Sing your heart out! 🎤', '🔴');
 
       if (!this.isPlaying) {
         this.play();
       }
     } catch (e) {
       console.error('Error starting MediaRecorder:', e);
-      alert('Could not start recording: ' + e.message);
+      this.showToast('Could not start recording: ' + e.message, '⚠️');
     }
   }
 
@@ -851,7 +879,7 @@ class KaraokeEngine {
       this.renderSearchResults(data.results || []);
     } catch (err) {
       console.error('Search failed:', err);
-      alert('Search failed: ' + err.message);
+      this.showToast('Search failed: ' + err.message, '⚠️');
     } finally {
       this.showProcessing(false);
     }
@@ -911,16 +939,44 @@ class KaraokeEngine {
       document.body.dataset.theme = e.target.value;
     });
 
+    // Party Mode Switcher (Clean simple stage)
+    if (this.dom.partyModeBtn) {
+      this.dom.partyModeBtn.addEventListener('click', () => {
+        const isParty = document.body.classList.toggle('party-mode');
+        this.dom.partyModeBtn.querySelector('.btn-text').textContent = isParty ? 'Exit Party' : 'Party Mode';
+        this.showToast(isParty ? '🎉 Party Mode: Stage maximized for singing!' : '🎛️ Studio Mode: Controls restored', isParty ? '🎉' : '🎛️');
+      });
+    }
+
+    // Quick Help Guide Modal
+    if (this.dom.helpBtn) {
+      this.dom.helpBtn.addEventListener('click', () => {
+        this.dom.helpModal.classList.remove('hidden');
+      });
+    }
+
+    if (this.dom.closeHelpModalBtn) {
+      this.dom.closeHelpModalBtn.addEventListener('click', () => {
+        this.dom.helpModal.classList.add('hidden');
+      });
+    }
+
+    if (this.dom.gotItBtn) {
+      this.dom.gotItBtn.addEventListener('click', () => {
+        this.dom.helpModal.classList.add('hidden');
+      });
+    }
+
     // Stage Mode Switcher (Equalizer vs Vinyl Disc)
     this.dom.stageModeBtn.addEventListener('click', () => {
       if (this.stageMode === 'equalizer') {
         this.stageMode = 'vinyl';
-        this.dom.stageModeText.textContent = 'Mode: Vinyl Disc 💿';
+        this.dom.stageModeText.textContent = 'Vinyl 💿';
         this.dom.vinylDisc.style.display = 'block';
         if (this.isPlaying) this.dom.vinylDisc.classList.add('spinning');
       } else {
         this.stageMode = 'equalizer';
-        this.dom.stageModeText.textContent = 'Mode: Equalizer ✨';
+        this.dom.stageModeText.textContent = 'Equalizer ✨';
         this.dom.vinylDisc.style.display = 'none';
       }
     });
@@ -1122,8 +1178,9 @@ class KaraokeEngine {
         this.lyrics = parsed;
         this.renderLyrics();
         this.dom.lyricsEditModal.classList.add('hidden');
+        this.showToast('Custom lyrics applied successfully!', '✨');
       } else {
-        alert('Could not parse timestamps. Please format as [00:12.34] lyric line');
+        this.showToast('Please format lyrics with timestamps like [00:12.34]', '✏️');
       }
     });
 

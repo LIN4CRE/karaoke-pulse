@@ -1634,3 +1634,146 @@ body {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ================= Party Mode Styles ================= */
+body.party-mode .sidebar-panel {
+  display: none !important;
+}
+
+body.party-mode .main-layout {
+  grid-template-columns: 1fr;
+}
+
+body.party-mode .lyrics-viewport {
+  padding: 80px 40px;
+}
+
+body.party-mode .lyric-line.active {
+  font-size: 3.2rem;
+}
+
+body.party-mode .party-btn {
+  background: linear-gradient(135deg, var(--neon-secondary), var(--neon-accent)) !important;
+  color: #050811 !important;
+  box-shadow: 0 0 18px rgba(247, 37, 133, 0.5) !important;
+}
+
+/* ================= Toast Notification System ================= */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 600;
+  max-width: 380px;
+  animation: toast-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.3s ease;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast.toast-hide {
+  transform: translateX(80px);
+  opacity: 0;
+}
+
+.toast-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+/* ================= Help / Quick Guide Modal ================= */
+.help-modal-card {
+  max-width: 780px !important;
+}
+
+.guide-steps-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.guide-step-card {
+  position: relative;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.step-num {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.08);
+}
+
+.step-icon {
+  font-size: 1.6rem;
+  margin-bottom: 2px;
+}
+
+.guide-step-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--neon-primary);
+}
+
+.guide-step-card p {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
+.guide-step-card code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--neon-accent);
+}
+
+.guide-shortcuts-bar {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  text-align: center;
+}
