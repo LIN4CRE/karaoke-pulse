@@ -257,15 +257,21 @@ function extractVideoId(input) {
 // Library Management
 function getLibrary() {
   try {
-    return JSON.parse(fs.readFileSync(LIBRARY_FILE, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(LIBRARY_FILE, 'utf8'));
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object' && data.id) {
+      return [data];
+    }
+    return [];
   } catch (e) {
     return [];
   }
 }
 
 function saveToLibrary(track) {
-  const lib = getLibrary();
-  const index = lib.findIndex(item => item.id === track.id);
+  let lib = getLibrary();
+  if (!Array.isArray(lib)) lib = [];
+  const index = lib.findIndex(item => item && item.id === track.id);
   if (index >= 0) {
     lib[index] = { ...lib[index], ...track };
   } else {
@@ -275,8 +281,9 @@ function saveToLibrary(track) {
 }
 
 function removeFromLibrary(id) {
-  const lib = getLibrary().filter(item => item.id !== id);
-  fs.writeFileSync(LIBRARY_FILE, JSON.stringify(lib, null, 2));
+  const lib = getLibrary();
+  const filtered = Array.isArray(lib) ? lib.filter(item => item && item.id !== id) : [];
+  fs.writeFileSync(LIBRARY_FILE, JSON.stringify(filtered, null, 2));
 }
 
 // API Routes
