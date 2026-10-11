@@ -200,6 +200,10 @@
         <!-- Stage Header Banner -->
         <div class="stage-banner">
           <div class="track-thumb-wrap">
+            <svg class="thumb-progress-ring" viewBox="0 0 76 76">
+              <circle class="ring-bg" cx="38" cy="38" r="35" />
+              <circle id="thumbProgressCircle" class="ring-fill" cx="38" cy="38" r="35" />
+            </svg>
             <img id="trackThumb" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80" alt="Track Art" class="track-thumb" />
             <div class="thumb-glow"></div>
             <!-- Vinyl Record Overlay (Shown in vinyl mode) -->
@@ -224,6 +228,13 @@
               <div id="detectedPitchNote" class="pitch-note">--</div>
               <div class="pitch-pulse-ring" id="pitchPulseRing"></div>
             </div>
+            <div class="pitch-ribbon-bar">
+              <span class="ribbon-end">Low</span>
+              <div class="ribbon-track">
+                <div id="pitchRibbonMarker" class="ribbon-marker"></div>
+              </div>
+              <span class="ribbon-end">High</span>
+            </div>
             <div class="pitch-status" id="pitchStatus">Mic inactive</div>
           </div>
         </div>
@@ -244,6 +255,9 @@
             </div>
           </div>
 
+          <!-- Confetti Particle Canvas -->
+          <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
           <!-- Lyrics Display -->
           <div class="lyrics-viewport" id="lyricsViewport">
             <div id="lyricsLines" class="lyrics-lines">
@@ -251,6 +265,15 @@
                 Select any song from <strong>Top Hits (Verified Lyrics)</strong> on the left to start singing!
               </div>
             </div>
+          </div>
+
+          <!-- Party SFX Soundboard -->
+          <div class="party-sfx-bar">
+            <span class="sfx-title">🎉 Party Soundboard:</span>
+            <button class="sfx-btn" id="sfxCheerBtn" title="Play Crowd Cheer & Confetti">👏 Cheer & Confetti</button>
+            <button class="sfx-btn" id="sfxAirhornBtn" title="Play Hype Airhorn">📢 Airhorn</button>
+            <button class="sfx-btn" id="sfxDrumrollBtn" title="Play Drumroll">🥁 Drumroll</button>
+            <button class="sfx-btn" id="sfxSparkleBtn" title="Sparkle Chime">✨ Sparkle</button>
           </div>
 
           <!-- Lyrics Fine Tuning & Sync Controls -->

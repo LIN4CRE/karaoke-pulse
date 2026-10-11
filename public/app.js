@@ -162,12 +162,22 @@ class KaraokeEngine {
       customLyricsInput: document.getElementById('customLyricsInput'),
       saveCustomLyricsBtn: document.getElementById('saveCustomLyricsBtn'),
       closeLyricsModalBtn: document.getElementById('closeLyricsModalBtn'),
-      cancelCustomLyricsBtn: document.getElementById('cancelCustomLyricsBtn')
+      cancelCustomLyricsBtn: document.getElementById('cancelCustomLyricsBtn'),
+
+      // Interactive Additions: SFX Soundboard, Ribbon & Progress Ring
+      thumbProgressCircle: document.getElementById('thumbProgressCircle'),
+      pitchRibbonMarker: document.getElementById('pitchRibbonMarker'),
+      confettiCanvas: document.getElementById('confettiCanvas'),
+      sfxCheerBtn: document.getElementById('sfxCheerBtn'),
+      sfxAirhornBtn: document.getElementById('sfxAirhornBtn'),
+      sfxDrumrollBtn: document.getElementById('sfxDrumrollBtn'),
+      sfxSparkleBtn: document.getElementById('sfxSparkleBtn')
     };
 
     this.initAudioContext();
     this.initEventListeners();
     this.initVisualizer();
+    this.initConfetti();
     this.loadCatalog();
     this.loadLibrary();
   }
@@ -339,6 +349,9 @@ class KaraokeEngine {
         this.dom.detectedPitchNote.textContent = '--';
         this.dom.pitchPulseRing.classList.remove('active');
         this.dom.pitchStatus.textContent = 'Sing note...';
+        if (this.dom.pitchRibbonMarker) {
+          this.dom.pitchRibbonMarker.style.opacity = '0.35';
+        }
       } else {
         const midi = Math.round(12 * (Math.log2(pitch / 440)) + 69);
         const noteName = this.noteStrings[midi % 12];
@@ -346,6 +359,14 @@ class KaraokeEngine {
         this.dom.detectedPitchNote.textContent = `${noteName}${octave}`;
         this.dom.pitchPulseRing.classList.add('active');
         this.dom.pitchStatus.textContent = `${Math.round(pitch)} Hz`;
+        if (this.dom.pitchRibbonMarker) {
+          this.dom.pitchRibbonMarker.style.opacity = '1';
+          const minLog = Math.log2(80);
+          const maxLog = Math.log2(880);
+          const curLog = Math.log2(Math.max(80, Math.min(880, pitch)));
+          const pct = Math.min(100, Math.max(0, ((curLog - minLog) / (maxLog - minLog)) * 100));
+          this.dom.pitchRibbonMarker.style.left = `${pct}%`;
+        }
       }
 
       requestAnimationFrame(checkPitch);
@@ -691,6 +712,14 @@ class KaraokeEngine {
     this.dom.scrubberThumb.style.left = `${pct}%`;
     this.dom.currentTimeDisplay.textContent = this.formatTime(cur);
     this.dom.totalTimeDisplay.textContent = this.formatTime(dur);
+
+    if (this.dom.thumbProgressCircle) {
+      // SVG circle radius 35: circumference = 2 * PI * 35 ≈ 219.91
+      const circumference = 220;
+      const progress = dur > 0 ? (cur / dur) : 0;
+      const offset = circumference - (progress * circumference);
+      this.dom.thumbProgressCircle.style.strokeDashoffset = offset;
+    }
   }
 
   formatTime(secs) {
@@ -815,7 +844,261 @@ class KaraokeEngine {
     draw();
   }
 
-  // 10. Library & Search
+  // 10. Interactive Confetti Particle Engine
+  initConfetti() {
+    const canvas = this.dom.confettiCanvas;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    const resize = () => {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    this.confettiParticles = [];
+    const colors = ['#f72585', '#7209b7', '#3a0ca3', '#4361ee', '#4cc9f0', '#00f5d4', '#fee440', '#ff007f'];
+
+    this.triggerConfetti = (count = 120) => {
+      for (let i = 0; i < count; i++) {
+        this.confettiParticles.push({
+          x: Math.random() * width,
+          y: -20 - Math.random() * 50,
+          size: Math.random() * 9 + 5,
+          speedX: (Math.random() - 0.5) * 7,
+          speedY: Math.random() * 4 + 3.5,
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          opacity: 1
+        });
+      }
+    };
+
+    const renderConfetti = () => {
+      requestAnimationFrame(renderConfetti);
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = this.confettiParticles.length - 1; i >= 0; i--) {
+        const p = this.confettiParticles[i];
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.rotation += p.rotSpeed;
+        p.speedY += 0.05; // gravity
+
+        if (p.y > height - 120) {
+          p.opacity -= 0.02;
+        }
+
+        if (p.y > height || p.opacity <= 0) {
+          this.confettiParticles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
+        ctx.restore();
+      }
+    };
+
+    renderConfetti();
+  }
+
+  // 11. Party Soundboard SFX Synthesizers (100% Web Audio API)
+  playSfxCheer() {
+    this.ensureAudioContext();
+    const ctx = this.audioCtx;
+    const now = ctx.currentTime;
+    const duration = 2.8;
+
+    this.triggerConfetti(140);
+
+    // Filtered white noise for crowd cheer / applause
+    const bufferSize = ctx.sampleRate * duration;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1200, now);
+    filter.Q.setValueAtTime(1.8, now);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(0.35, now + 0.35);
+    gain.gain.linearRampToValueAtTime(0.3, now + 1.2);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    gain.connect(this.recordDestination);
+
+    noise.start(now);
+    noise.stop(now + duration);
+
+    // Crowd hype vocal glides
+    [320, 480].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.15);
+      osc.frequency.exponentialRampToValueAtTime(freq * 1.6, now + idx * 0.15 + 0.5);
+
+      oscGain.gain.setValueAtTime(0.001, now + idx * 0.15);
+      oscGain.gain.exponentialRampToValueAtTime(0.12, now + idx * 0.15 + 0.2);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.15 + 0.55);
+
+      osc.connect(oscGain);
+      oscGain.connect(ctx.destination);
+      oscGain.connect(this.recordDestination);
+
+      osc.start(now + idx * 0.15);
+      osc.stop(now + idx * 0.15 + 0.6);
+    });
+
+    this.showToast('🎉 Crowd Cheer & Confetti!', '👏', 2000);
+  }
+
+  playSfxAirhorn() {
+    this.ensureAudioContext();
+    const ctx = this.audioCtx;
+    const now = ctx.currentTime;
+
+    const blasts = [
+      { start: 0, dur: 0.16 },
+      { start: 0.22, dur: 0.16 },
+      { start: 0.44, dur: 0.38 }
+    ];
+
+    blasts.forEach(b => {
+      const freqs = [698, 587, 466];
+      freqs.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq * (1 + (i - 1) * 0.015), now + b.start);
+        if (b.dur > 0.2) {
+          osc.frequency.exponentialRampToValueAtTime(freq * 0.75, now + b.start + b.dur);
+        }
+
+        gain.gain.setValueAtTime(0.001, now + b.start);
+        gain.gain.linearRampToValueAtTime(0.15, now + b.start + 0.02);
+        gain.gain.setValueAtTime(0.15, now + b.start + b.dur - 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + b.start + b.dur);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        gain.connect(this.recordDestination);
+
+        osc.start(now + b.start);
+        osc.stop(now + b.start + b.dur + 0.01);
+      });
+    });
+
+    this.showToast('📢 Airhorn Hype!', '🎺', 1500);
+  }
+
+  playSfxDrumroll() {
+    this.ensureAudioContext();
+    const ctx = this.audioCtx;
+    const now = ctx.currentTime;
+    const rollDur = 1.7;
+
+    const totalTaps = 30;
+    for (let i = 0; i < totalTaps; i++) {
+      const tapTime = now + (i / totalTaps) * rollDur;
+      const progress = i / totalTaps;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(180 + Math.random() * 40, tapTime);
+
+      const vol = 0.02 + progress * 0.18;
+      gain.gain.setValueAtTime(vol, tapTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, tapTime + 0.05);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.connect(this.recordDestination);
+
+      osc.start(tapTime);
+      osc.stop(tapTime + 0.06);
+    }
+
+    const crashTime = now + rollDur + 0.02;
+    const bufferSize = ctx.sampleRate * 1.5;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.setValueAtTime(4500, crashTime);
+
+    const crashGain = ctx.createGain();
+    crashGain.gain.setValueAtTime(0.3, crashTime);
+    crashGain.gain.exponentialRampToValueAtTime(0.001, crashTime + 1.4);
+
+    noise.connect(filter);
+    filter.connect(crashGain);
+    crashGain.connect(ctx.destination);
+    crashGain.connect(this.recordDestination);
+
+    noise.start(crashTime);
+    noise.stop(crashTime + 1.5);
+
+    this.showToast('🥁 Drumroll crescendo!', '🥁', 2000);
+  }
+
+  playSfxSparkle() {
+    this.ensureAudioContext();
+    const ctx = this.audioCtx;
+    const now = ctx.currentTime;
+
+    const notes = [1046.5, 1174.66, 1318.51, 1567.98, 1760.0, 2093.0, 2637.02];
+    notes.forEach((freq, idx) => {
+      const startTime = now + idx * 0.07;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, startTime);
+
+      gain.gain.setValueAtTime(0.001, startTime);
+      gain.gain.linearRampToValueAtTime(0.18, startTime + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.65);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.connect(this.recordDestination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.7);
+    });
+
+    this.showToast('✨ Sparkle Chime!', '💫', 1500);
+  }
+
+  // 12. Library & Search
   async loadLibrary() {
     try {
       const res = await fetch('/api/library');
@@ -1092,7 +1375,23 @@ class KaraokeEngine {
     this.dom.karaokeAudio.addEventListener('ended', () => {
       this.pause();
       this.seek(0);
+      this.showToast('Bravo! Song completed! 🎉', '👏', 4000);
+      this.triggerConfetti(150);
     });
+
+    // Party SFX Soundboard Buttons
+    if (this.dom.sfxCheerBtn) {
+      this.dom.sfxCheerBtn.addEventListener('click', () => this.playSfxCheer());
+    }
+    if (this.dom.sfxAirhornBtn) {
+      this.dom.sfxAirhornBtn.addEventListener('click', () => this.playSfxAirhorn());
+    }
+    if (this.dom.sfxDrumrollBtn) {
+      this.dom.sfxDrumrollBtn.addEventListener('click', () => this.playSfxDrumroll());
+    }
+    if (this.dom.sfxSparkleBtn) {
+      this.dom.sfxSparkleBtn.addEventListener('click', () => this.playSfxSparkle());
+    }
 
     // Vocal Slider
     this.dom.vocalSlider.addEventListener('input', (e) => {
