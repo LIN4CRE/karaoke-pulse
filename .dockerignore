@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+media/*.mp3
+media/*.vtt
+media/*.en.vtt
+media/test_*
+.git
+.gitignore
+bin/*.exe
+bin/cloudflared*

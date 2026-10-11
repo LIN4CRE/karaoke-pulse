@@ -1,14 +1,23 @@
 {
-  "name": "youtube-karaoke",
+  "name": "karaoke-pulse",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Full-stack YouTube Karaoke Studio with synced lyrics, multiband vocal removal, live mic reverb, pitch detection, and party queue.",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "karaoke",
+    "youtube",
+    "vocal-removal",
+    "synced-lyrics",
+    "lrc",
+    "web-audio-api",
+    "pitch-detection"
+  ],
+  "author": "David Linacre",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "cors": "^2.8.6",

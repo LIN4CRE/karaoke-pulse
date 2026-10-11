@@ -30,16 +30,24 @@ if (!fs.existsSync(LIBRARY_FILE)) fs.writeFileSync(LIBRARY_FILE, JSON.stringify(
 
 // Locate yt-dlp and ffmpeg
 function resolveBinaries() {
-  const localAppData = process.env.LOCALAPPDATA || 'C:\\Users\\David\\AppData\\Local';
+  const isWin = process.platform === 'win32';
+  const localAppData = process.env.LOCALAPPDATA || '';
+  
   const ytCandidates = [
-    path.join(localAppData, 'Microsoft\\WinGet\\Packages\\yt-dlp.yt-dlp_Microsoft.Winget.Source_8wekyb3d8bbwe\\yt-dlp.exe'),
-    path.join(localAppData, 'Microsoft\\WinGet\\Links\\yt-dlp.exe'),
+    path.join(__dirname, 'bin', isWin ? 'yt-dlp.exe' : 'yt-dlp'),
+    ...(localAppData ? [
+      path.join(localAppData, 'Microsoft\\WinGet\\Packages\\yt-dlp.yt-dlp_Microsoft.Winget.Source_8wekyb3d8bbwe\\yt-dlp.exe'),
+      path.join(localAppData, 'Microsoft\\WinGet\\Links\\yt-dlp.exe')
+    ] : []),
     'yt-dlp'
   ];
 
   const ffmpegCandidates = [
-    path.join(localAppData, 'Microsoft\\WinGet\\Packages\\yt-dlp.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-N-126374-g089a48eb36-win64-gpl\\bin\\ffmpeg.exe'),
-    path.join(localAppData, 'Microsoft\\WinGet\\Links\\ffmpeg.exe'),
+    path.join(__dirname, 'bin', isWin ? 'ffmpeg.exe' : 'ffmpeg'),
+    ...(localAppData ? [
+      path.join(localAppData, 'Microsoft\\WinGet\\Packages\\yt-dlp.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-N-126374-g089a48eb36-win64-gpl\\bin\\ffmpeg.exe'),
+      path.join(localAppData, 'Microsoft\\WinGet\\Links\\ffmpeg.exe')
+    ] : []),
     'ffmpeg'
   ];
 
@@ -56,7 +64,7 @@ function resolveBinaries() {
   for (const cand of ffmpegCandidates) {
     if (cand === 'ffmpeg' || fs.existsSync(cand)) {
       ffmpegPath = cand;
-      ffmpegDir = path.dirname(cand);
+      ffmpegDir = cand === 'ffmpeg' ? '' : path.dirname(cand);
       break;
     }
   }
@@ -511,7 +519,7 @@ app.post('/api/process', async (req, res) => {
       '-x',
       '--audio-format', 'mp3',
       '--audio-quality', '0',
-      '--ffmpeg-location', ffmpegDir,
+      ...(ffmpegDir && ffmpegDir !== '.' ? ['--ffmpeg-location', ffmpegDir] : []),
       '-o', originalFile.replace('.mp3', '.%(ext)s'),
       `https://www.youtube.com/watch?v=${videoId}`
     ];
