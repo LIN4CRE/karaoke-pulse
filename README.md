@@ -42,19 +42,36 @@ Never guess whether a song has lyrics. Includes 30+ pre-verified crowd favorites
 - **Sync Offset Micro-Tuner**: Fast buttons (`-0.5s` to `+0.5s`) for micro-adjusting lyrics sync on the fly.
 - **Automatic Fallback to YouTube Captions**: If a track isn't on LRCLIB, YouTube's official captions are extracted and converted to synced LRC format.
 
-### 4. 🎙️ Live Microphone, Karaoke Reverb & Pitch Detector
+### 4. 🎙️ Live Microphone, Voice FX & Pitch Ribbon
 - Connect your microphone with one click.
-- **Karaoke Reverb / Echo Slider**: Authentic lounge reverberation using algorithmic stereo feedback delay.
-- **Autocorrelation Pitch Detector**: Identifies the musical note you are singing (e.g. `C4`, `G4`) with a glowing reactive vocal ring.
+- **Voice FX Presets**: Switch instantly between *Studio Reverb*, *Stadium Arena*, *Pop Slapback Echo*, *Vintage Radio*, and *Clean Dry*.
+- **Autocorrelation Pitch Detector & Pitch Ribbon**: Identifies the musical note you are singing (e.g. `C4`, `G4`) with a glowing real-time Pitch Ribbon gliding between Low and High vocal registers.
 
-### 5. 🔴 Performance Take Recorder
+### 5. 🏆 SingStar Performance Scoring & Combo System
+- **Real-Time Singing Score**: Earn points and build up hype streaks (up to 20x multiplier!) as you sing into the mic in sync with the lyrics.
+- **Star Rating**: Climb from 1 to 5 stars in real time.
+- **Vocal Performance Summary Modal**: When a song ends, your performance is graded (**S, A, B, C**) with max streak, singing energy %, stars, and celebratory confetti!
+
+### 6. 📋 Party "Up Next" Queue System
+- Line up songs seamlessly for parties. Every track card has a **"+ Queue"** button.
+- View and manage upcoming songs in the **Up Next** tab.
+- Automatically advances to the next track when a song finishes!
+
+### 7. 🎉 Party Soundboard & Confetti Physics
+- **👏 Cheer & Confetti**: Crowd applause with a festive particle confetti shower.
+- **📢 Airhorn**: Classic 3-blast stadium dancehall hype horn.
+- **🥁 Drumroll**: Accelerating snare drum crescendo into a resonant cymbal hit.
+- **✨ Sparkle**: Pentatonic glockenspiel chime arpeggio.
+
+### 8. 🔴 Performance Take Recorder
 - Record your voice mixed together with the karaoke instrumental track.
 - Preview and download your recorded take (`.webm`).
 
-### 6. 🎨 4 Aesthetic Themes & Stage Modes
-- **Theme Picker**: *Cyberpunk Neon*, *Cosmic Violet*, *Sunset Gold*, *Tokyo Emerald*.
-- **Stage Modes**: Toggle between **Neon Spectrum Equalizer** and a **3D Spinning Vinyl Record**.
-- **Fullscreen Stage Mode**: Hook up to a TV or monitor for a true karaoke party.
+### 9. 🎨 Themes, Visualizers & TV Cinema Mode
+- **4 Aesthetic Neon Themes**: *Cyberpunk Neon*, *Electric Sunset*, *Aurora Borealis*, *Midnight Velvet*.
+- **3 Visualizer Modes**: *Cyber Bars* 📊, *Neon Oscilloscope Wave* 〰️, and *Radial Starburst* 💥.
+- **📺 Big Stage TV Cinema Mode**: Maximizes the lyrics screen for living room TVs and party projectors.
+- **Stage Modes**: Toggle between **Spectrum Equalizer** and a **Spinning Vinyl Record**.
 
 ---
 
