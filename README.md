@@ -6,7 +6,7 @@
 
 ### *Turn Any YouTube Song into a Live Karaoke Experience with Synced Lyrics, Dual-Stem Vocal Removal, Live Mic Reverb & Pitch Detection*
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Try_Online-00f5d4?style=for-the-badge&logo=cloudflare&logoColor=black)](https://valuation-product-nelson-difference.trycloudflare.com)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Try_Online-00f5d4?style=for-the-badge&logo=githubpages&logoColor=white)](https://lin4cre.github.io/karaoke-pulse/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-LIN4CRE%2Fkaraoke--pulse-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/LIN4CRE/karaoke-pulse)
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](Dockerfile)
 [![Node.js Version](https://img.shields.io/badge/Node.js-v20%2B-7209b7?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
@@ -15,7 +15,7 @@
 
 ---
 
-[**🌐 Live Studio**](https://valuation-product-nelson-difference.trycloudflare.com) &bull; [**🌟 Features**](#-features) &bull; [**🐳 Docker Quickstart**](#-docker-quickstart-recommended) &bull; [**🚀 Local Quickstart**](#-local-installation) &bull; [**☁️ 1-Click Cloud Deploy**](#%EF%B8%8F-1-click-cloud-deploy) &bull; [**🎹 Hotkeys**](#-keyboard-shortcuts)
+[**🌐 Live Studio**](https://lin4cre.github.io/karaoke-pulse/) &bull; [**🌟 Features**](#-features) &bull; [**🐳 Docker Quickstart**](#-docker-quickstart-recommended) &bull; [**🚀 Local Quickstart**](#-local-installation) &bull; [**☁️ 1-Click Cloud Deploy**](#%EF%B8%8F-1-click-cloud-deploy) &bull; [**🎹 Hotkeys**](#-keyboard-shortcuts)
 
 </div>
 

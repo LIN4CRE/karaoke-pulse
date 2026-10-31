@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KaraokePulse 🎤 YouTube Karaoke Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="cyberpunk">
+  <div class="ambient-glow-mesh"></div>
+  <div class="app-container" id="appContainer">
+    <!-- Header -->
+    <header class="app-header glass-panel">
+      <div class="logo-area">
+        <div class="logo-badge">
+          <span class="logo-pulse-ring"></span>
+          <span class="logo-icon">🎤</span>
+        </div>
+        <div>
+          <div class="logo-title-row">
+            <h1 class="logo-title">Karaoke<span class="gradient-text">Pulse</span></h1>
+            <span class="version-tag">PRO</span>
+          </div>
+          <p class="logo-subtitle">YouTube Music into Live Studio Karaoke &bull; Synced Lyrics Engine</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Theme Picker -->
+        <div class="theme-picker-wrap">
+          <span class="picker-label">Theme:</span>
+          <select id="themeSelect" class="theme-select">
+            <option value="cyberpunk" selected>🌆 Cyberpunk Neon</option>
+            <option value="cosmic">🌌 Cosmic Violet</option>
+            <option value="sunset">🌅 Sunset Gold</option>
+            <option value="emerald">🍵 Tokyo Emerald</option>
+          </select>
+        </div>
+
+        <button id="micToggleBtn" class="pill-btn mic-btn" title="Toggle Live Microphone">
+          <span class="btn-icon">🎙️</span>
+          <span class="btn-text">Mic: Off</span>
+        </button>
+
+        <button id="recordToggleBtn" class="pill-btn record-btn" title="Record Your Performance">
+          <span class="btn-icon">🔴</span>
+          <span class="btn-text">Record Take</span>
+        </button>
+
+        <button id="partyModeBtn" class="pill-btn party-btn" title="Toggle Clean Party Mode">
+          <span class="btn-icon">🎉</span>
+          <span class="btn-text">Party Mode</span>
+        </button>
+
+        <button id="helpBtn" class="pill-btn help-btn" title="How to Use KaraokePulse">
+          <span class="btn-icon">💡</span>
+          <span class="btn-text">Guide</span>
+        </button>
+
+        <button id="stageModeBtn" class="pill-btn stage-view-btn" title="Toggle Backdrop Visualizer Mode">
+          <span class="btn-icon">✨</span>
+          <span class="btn-text" id="stageModeText">Equalizer</span>
+        </button>
+
+        <button id="visStyleBtn" class="pill-btn stage-view-btn" title="Cycle Visualizer Style: Bars, Wave, or Starburst">
+          <span class="btn-icon">📊</span>
+          <span class="btn-text" id="visStyleText">Bars</span>
+        </button>
+
+        <button id="theaterBtn" class="pill-btn theater-btn" title="Toggle Big Stage Cinema / TV Mode">
+          <span class="btn-icon">📺</span>
+          <span class="btn-text">Big Stage</span>
+        </button>
+
+        <button id="fullscreenBtn" class="icon-btn" title="Fullscreen Stage Mode">
+          ⛶
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="main-layout" id="mainLayout">
+      <!-- Left: Song Finder Sidebar -->
+      <section class="sidebar-panel glass-panel" id="sidebarPanel">
+        <div class="tab-nav">
+          <button class="tab-btn active" data-tab="catalogTab">🌟 Top Hits</button>
+          <button class="tab-btn" data-tab="searchTab">🔍 Search</button>
+          <button class="tab-btn" data-tab="queueTab">📋 Up Next (<span id="queueBadge">0</span>)</button>
+          <button class="tab-btn" data-tab="urlTab">🔗 URL</button>
+          <button class="tab-btn" data-tab="libraryTab">📚 Library</button>
+        </div>
+
+        <!-- Tab 1: Curated Guaranteed Synced Lyrics Catalog -->
+        <div id="catalogTab" class="tab-pane active">
+          <div class="catalog-header-bar">
+            <div class="catalog-info">
+              <span class="verified-pill">✓ 100% Synced Lyrics Guaranteed</span>
+              <p>Top crowd favorites pre-verified for seamless karaoke</p>
+            </div>
+            <!-- Genre filters -->
+            <div class="genre-chips">
+              <button class="genre-chip active" data-genre="all">All</button>
+              <button class="genre-chip" data-genre="Free Hits">🆓 Free Hits</button>
+              <button class="genre-chip" data-genre="Rock">Rock</button>
+              <button class="genre-chip" data-genre="Pop">Pop</button>
+              <button class="genre-chip" data-genre="Classics">Classics</button>
+              <button class="genre-chip" data-genre="Party 80s/90s">80s/90s Party</button>
+            </div>
+          </div>
+
+          <div id="catalogList" class="results-list catalog-grid">
+            <div class="loading-catalog">
+              <div class="spinner"></div>
+              <p>Loading karaoke hit catalog...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Search YouTube -->
+        <div id="searchTab" class="tab-pane">
+          <form id="searchForm" class="search-form">
+            <div class="search-input-wrap">
+              <span class="search-icon">🔍</span>
+              <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Search any artist, song, or band (e.g. Queen, Adele, Beatles)..." 
+                autocomplete="off"
+              />
+            </div>
+            <button type="submit" class="primary-btn search-submit-btn">Search</button>
+          </form>
+
+          <div class="search-filter-row">
+            <label class="lyrics-filter-toggle">
+              <input type="checkbox" id="lyricsOnlyFilter" checked />
+              <span class="toggle-slider"></span>
+              <span class="toggle-text">Prioritize Verified Synced Lyrics</span>
+            </label>
+          </div>
+
+          <div class="quick-picks">
+            <span class="quick-label">Trending Karaoke Searches:</span>
+            <button class="chip-btn" data-query="Queen Bohemian Rhapsody">Bohemian Rhapsody</button>
+            <button class="chip-btn" data-query="Taylor Swift Cruel Summer">Cruel Summer</button>
+            <button class="chip-btn" data-query="Bon Jovi Livin on a Prayer">Livin' on a Prayer</button>
+            <button class="chip-btn" data-query="Frank Sinatra Fly Me to the Moon">Fly Me to the Moon</button>
+            <button class="chip-btn" data-query="Whitney Houston I Wanna Dance with Somebody">I Wanna Dance</button>
+          </div>
+
+          <div id="searchResults" class="results-list">
+            <div class="empty-state">
+              <span class="empty-icon">🎵</span>
+              <p>Search any song to extract the backing track & synchronized lyrics.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Party Queue / Up Next -->
+        <div id="queueTab" class="tab-pane">
+          <div class="queue-header-bar">
+            <div class="queue-info">
+              <h3>Party Up Next Queue</h3>
+              <p>Songs will play automatically one after another</p>
+            </div>
+            <button id="clearQueueBtn" class="pill-btn danger-outline" title="Clear all queued songs">Clear All</button>
+          </div>
+          <div id="queueList" class="results-list queue-list">
+            <div class="empty-state">
+              <span class="empty-icon">📋</span>
+              <p>Queue is empty! Click <strong>"+ Queue"</strong> on any song to line it up for the party.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Paste URL -->
+        <div id="urlTab" class="tab-pane">
+          <div class="url-input-card">
+            <h3>Paste Any YouTube or YouTube Music Link</h3>
+            <p>KaraokePulse will download the audio, isolate the instrumental track, and fetch synchronized lyrics automatically.</p>
+            <div class="input-with-button">
+              <input 
+                type="text" 
+                id="urlInput" 
+                placeholder="https://www.youtube.com/watch?v=... or https://music.youtube.com/..." 
+              />
+              <button id="urlSubmitBtn" class="primary-btn">Generate Karaoke</button>
+            </div>
+            <div class="url-badges">
+              <span>✓ YouTube Videos</span>
+              <span>✓ YouTube Music</span>
+              <span>✓ youtu.be Links</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Local Library -->
+        <div id="libraryTab" class="tab-pane">
+          <div class="library-header">
+            <h3>Saved Karaoke Songs</h3>
+            <button id="refreshLibraryBtn" class="text-btn">↻ Refresh</button>
+          </div>
+          <div id="libraryList" class="results-list">
+            <div class="empty-state">
+              <span class="empty-icon">📁</span>
+              <p>Your processed songs will appear here for instant zero-wait replay!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Processing Status Modal Overlay -->
+        <div id="processingCard" class="processing-card hidden">
+          <div class="spinner"></div>
+          <div class="processing-info">
+            <h4 id="processingTitle">Extracting Audio Stems...</h4>
+            <p id="processingDetail">Downloading track & isolating center vocals</p>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill indeterminate"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Center / Right: The Stage & Player -->
+      <section class="stage-panel glass-panel">
+        <!-- Stage Header Banner -->
+        <div class="stage-banner">
+          <div class="track-thumb-wrap">
+            <svg class="thumb-progress-ring" viewBox="0 0 76 76">
+              <circle class="ring-bg" cx="38" cy="38" r="35" />
+              <circle id="thumbProgressCircle" class="ring-fill" cx="38" cy="38" r="35" />
+            </svg>
+            <img id="trackThumb" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80" alt="Track Art" class="track-thumb" />
+            <div class="thumb-glow"></div>
+            <!-- Vinyl Record Overlay (Shown in vinyl mode) -->
+            <div class="vinyl-disc" id="vinylDisc">
+              <div class="vinyl-groove"></div>
+              <div class="vinyl-center"></div>
+            </div>
+          </div>
+          <div class="track-details">
+            <div class="status-badge-row">
+              <span class="now-singing-tag">NOW PLAYING</span>
+              <span id="lyricsStatusPill" class="lyrics-badge verified">✓ Synced Lyrics Ready</span>
+            </div>
+            <h2 id="currentTrackTitle">Select or Search a Song to Start</h2>
+            <p id="currentTrackArtist">Choose a song from Top Hits or search above</p>
+          </div>
+
+          <!-- Live Vocal Pitch & Mic Monitor -->
+          <div class="stage-pitch-meter" id="stagePitchMeter">
+            <span class="pitch-label">Vocal Pitch</span>
+            <div class="pitch-ring-wrap">
+              <div id="detectedPitchNote" class="pitch-note">--</div>
+              <div class="pitch-pulse-ring" id="pitchPulseRing"></div>
+            </div>
+            <div class="pitch-ribbon-bar">
+              <span class="ribbon-end">Low</span>
+              <div class="ribbon-track">
+                <div id="pitchRibbonMarker" class="ribbon-marker"></div>
+              </div>
+              <span class="ribbon-end">High</span>
+            </div>
+            <div class="pitch-status" id="pitchStatus">Mic inactive</div>
+          </div>
+
+          <!-- Live Singing Performance Score & Combo -->
+          <div class="stage-score-meter" id="stageScoreMeter" title="Sing into the mic to score points!">
+            <span class="score-label">Singing Score</span>
+            <div class="score-val" id="liveScoreVal">0</div>
+            <div class="streak-badge-row">
+              <span id="liveStreakBadge" class="streak-badge">Ready 🎤</span>
+            </div>
+            <div class="score-stars" id="scoreStars">☆☆☆☆☆</div>
+          </div>
+        </div>
+
+        <!-- The Lyrics & Stage Screen -->
+        <div class="lyrics-stage-container" id="lyricsStage">
+          <!-- Ambient Audio Visualizer Canvas -->
+          <canvas id="visualizerCanvas" class="visualizer-canvas"></canvas>
+
+          <!-- Stage Lighting Beam -->
+          <div class="stage-light-beam"></div>
+
+          <!-- Countdown Overlay (3... 2... 1...) -->
+          <div id="countdownOverlay" class="countdown-overlay hidden">
+            <div class="countdown-box">
+              <span class="countdown-label">GET READY TO SING IN</span>
+              <div id="countdownNumber" class="countdown-number">3</div>
+            </div>
+          </div>
+
+          <!-- Confetti Particle Canvas -->
+          <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+          <!-- Lyrics Display -->
+          <div class="lyrics-viewport" id="lyricsViewport">
+            <div id="lyricsLines" class="lyrics-lines">
+              <div class="lyric-line placeholder">
+                Select any song from <strong>Top Hits (Verified Lyrics)</strong> on the left to start singing!
+              </div>
+            </div>
+          </div>
+
+          <!-- Party SFX Soundboard -->
+          <div class="party-sfx-bar">
+            <span class="sfx-title">🎉 Party Soundboard:</span>
+            <button class="sfx-btn" id="sfxCheerBtn" title="Play Crowd Cheer & Confetti">👏 Cheer & Confetti</button>
+            <button class="sfx-btn" id="sfxAirhornBtn" title="Play Hype Airhorn">📢 Airhorn</button>
+            <button class="sfx-btn" id="sfxDrumrollBtn" title="Play Drumroll">🥁 Drumroll</button>
+            <button class="sfx-btn" id="sfxSparkleBtn" title="Sparkle Chime">✨ Sparkle</button>
+          </div>
+
+          <!-- Lyrics Fine Tuning & Sync Controls -->
+          <div class="lyrics-sync-bar">
+            <div class="sync-group">
+              <span class="sync-label">Lyrics Sync Offset:</span>
+              <button class="sync-btn" id="syncMinusHalf">-0.5s</button>
+              <button class="sync-btn" id="syncMinusTenth">-0.1s</button>
+              <span id="currentSyncOffset" class="sync-display">0.0s</span>
+              <button class="sync-btn" id="syncPlusTenth">+0.1s</button>
+              <button class="sync-btn" id="syncPlusHalf">+0.5s</button>
+              <button class="sync-btn reset" id="syncReset">Reset</button>
+            </div>
+            <div class="sync-group right">
+              <button class="sync-btn edit-lyrics-btn" id="manualLyricsBtn">✏️ Edit / Paste Lyrics</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Studio Control Deck -->
+        <div class="studio-deck">
+          <!-- Playback Scrubber -->
+          <div class="scrubber-row">
+            <span id="currentTimeDisplay" class="time-label">0:00</span>
+            <div class="scrubber-wrap" id="scrubberWrap">
+              <div class="scrubber-track">
+                <div class="scrubber-fill" id="scrubberFill"></div>
+                <div class="scrubber-thumb" id="scrubberThumb"></div>
+              </div>
+            </div>
+            <span id="totalTimeDisplay" class="time-label">0:00</span>
+            <!-- Master Music Volume -->
+            <div class="master-vol-wrap">
+              <button id="masterMuteBtn" class="vol-icon-btn" title="Mute/Unmute">🔊</button>
+              <input type="range" id="masterVolumeSlider" min="0" max="100" value="90" class="mini-slider master-slider" title="Music Volume">
+              <span id="masterVolVal" class="vol-label">90%</span>
+            </div>
+          </div>
+
+          <!-- Main Controls Grid -->
+          <div class="controls-grid">
+            <!-- Transport Controls -->
+            <div class="transport-controls">
+              <button id="restartBtn" class="ctrl-btn icon" title="Restart Song">⏮</button>
+              <button id="skipBackBtn" class="ctrl-btn" title="Back 10s">⏪ 10s</button>
+              <button id="playPauseBtn" class="ctrl-btn play-btn" title="Play/Pause (Space)">
+                <span id="playPauseIcon">▶</span>
+              </button>
+              <button id="skipForwardBtn" class="ctrl-btn" title="Forward 10s">10s ⏩</button>
+            </div>
+
+            <!-- The Magic Vocal Remover Slider -->
+            <div class="slider-module vocal-module">
+              <div class="module-header">
+                <span class="module-title">✨ Vocal Reducer</span>
+                <span id="vocalLevelDisplay" class="module-badge">0% (Pure Karaoke)</span>
+              </div>
+              <div class="slider-wrapper">
+                <span class="slider-end-label">Karaoke</span>
+                <input 
+                  type="range" 
+                  id="vocalSlider" 
+                  min="0" 
+                  max="100" 
+                  value="0" 
+                  class="studio-slider vocal-slider"
+                />
+                <span class="slider-end-label">Original</span>
+              </div>
+              <div class="vocal-presets">
+                <button class="preset-btn active" data-vocal="0">0% Karaoke</button>
+                <button class="preset-btn" data-vocal="25">25% Guide</button>
+                <button class="preset-btn" data-vocal="50">50% Half</button>
+                <button class="preset-btn" data-vocal="100">100% Original</button>
+              </div>
+            </div>
+
+            <!-- Microphone & Effects Module -->
+            <div class="slider-module mic-module">
+              <div class="module-header">
+                <span class="module-title">🎙️ Mic & Reverb</span>
+                <span class="headphone-tip" title="Use headphones for zero feedback">🎧 Headphones Rec.</span>
+                <span id="micStatusText" class="module-badge mic-badge">Off</span>
+              </div>
+              <div class="mic-sliders">
+                <div class="mini-slider-row">
+                  <span class="mini-label">Mic Vol</span>
+                  <input type="range" id="micVolumeSlider" min="0" max="150" value="100" class="mini-slider">
+                  <span id="micVolVal" class="mini-val">100%</span>
+                </div>
+                <div class="mini-slider-row">
+                  <span class="mini-label">Karaoke Echo</span>
+                  <input type="range" id="reverbSlider" min="0" max="100" value="45" class="mini-slider">
+                  <span id="reverbVal" class="mini-val">45%</span>
+                </div>
+                <div class="mini-slider-row">
+                  <span class="mini-label">Voice FX</span>
+                  <select id="voiceFxSelect" class="studio-select mini-select">
+                    <option value="studio" selected>Studio Reverb</option>
+                    <option value="arena">Stadium Arena</option>
+                    <option value="echo">Slapback Echo</option>
+                    <option value="radio">Vintage Radio</option>
+                    <option value="dry">Dry / Clean</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Key & Tempo Module -->
+            <div class="slider-module pitch-module">
+              <div class="module-header">
+                <span class="module-title">🎵 Key & Speed</span>
+                <span id="pitchDisplayVal" class="module-badge">Normal</span>
+              </div>
+              <div class="pitch-tempo-controls">
+                <div class="step-ctrl">
+                  <span class="step-label">Key:</span>
+                  <button class="step-btn" id="pitchDownBtn">-</button>
+                  <span id="keySemitones" class="step-val">0</span>
+                  <button class="step-btn" id="pitchUpBtn">+</button>
+                </div>
+                <div class="step-ctrl">
+                  <span class="step-label">Speed:</span>
+                  <select id="playbackSpeedSelect" class="studio-select">
+                    <option value="0.8">0.8x</option>
+                    <option value="0.9">0.9x</option>
+                    <option value="1.0" selected>1.0x</option>
+                    <option value="1.1">1.1x</option>
+                    <option value="1.2">1.2x</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Recording Take Modal / Player -->
+    <div id="recordingModal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>🎉 Your Karaoke Take is Ready!</h3>
+          <button id="closeModalBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Listen back to your vocal performance mixed with the karaoke instrumental track:</p>
+          <audio id="recordedAudioPlayer" controls class="recorded-player"></audio>
+          <div class="modal-actions">
+            <button id="downloadRecordingBtn" class="primary-btn">⬇️ Download Your Take (.webm)</button>
+            <button id="dismissModalBtn" class="secondary-btn">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Singing Performance Score Summary Modal (SingStar/Joysound Style) -->
+    <div id="scoreSummaryModal" class="modal-overlay hidden">
+      <div class="modal-card score-summary-card">
+        <div class="modal-header">
+          <h3>🏆 Vocal Performance Rating</h3>
+          <button id="closeScoreModalBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body text-center">
+          <div class="trophy-badge" id="scoreGradeBadge">S</div>
+          <h2 id="scoreTitleText" class="score-title">Outstanding Vocalist!</h2>
+          <div class="score-numbers-grid">
+            <div class="score-stat-box">
+              <span class="stat-num" id="finalScoreVal">9,450</span>
+              <span class="stat-label">Final Score</span>
+            </div>
+            <div class="score-stat-box">
+              <span class="stat-num" id="finalMaxStreakVal">18x</span>
+              <span class="stat-label">Max Streak</span>
+            </div>
+            <div class="score-stat-box">
+              <span class="stat-num" id="finalPitchAccVal">95%</span>
+              <span class="stat-label">Singing Energy</span>
+            </div>
+          </div>
+          <div class="final-stars" id="finalStarsDisplay">⭐⭐⭐⭐⭐</div>
+          <div class="modal-actions center-actions">
+            <button id="singAgainBtn" class="primary-btn">🔁 Sing Again</button>
+            <button id="nextQueueBtn" class="secondary-btn">⏭ Play Next in Queue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Lyrics Modal -->
+    <div id="lyricsEditModal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>✏️ Edit or Paste Custom Lyrics</h3>
+          <button id="closeLyricsModalBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Paste timestamped lyrics (<code>[00:12.34] lyric line</code>) or plain text line-by-line:</p>
+          <textarea id="customLyricsInput" class="lyrics-textarea" rows="12" placeholder="[00:15.00] In the hall of the mountain king..."></textarea>
+          <div class="modal-actions">
+            <button id="saveCustomLyricsBtn" class="primary-btn">Apply Lyrics</button>
+            <button id="cancelCustomLyricsBtn" class="secondary-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Guide Modal (Zero Coding Needed!) -->
+    <div id="helpModal" class="modal-overlay hidden">
+      <div class="modal-card help-modal-card">
+        <div class="modal-header">
+          <h3>🎤 How to Use KaraokePulse in 4 Easy Steps</h3>
+          <button id="closeHelpModalBtn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="guide-steps-grid">
+            <div class="guide-step-card">
+              <span class="step-num">1</span>
+              <div class="step-icon">🎵</div>
+              <h4>Pick Any Song</h4>
+              <p>Click any song from <strong>Top Hits</strong> on the left, or type any artist in <strong>Search YouTube</strong>. Songs with lyrics are marked with green badges.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-num">2</span>
+              <div class="step-icon">🎙️</div>
+              <h4>Turn On Your Mic</h4>
+              <p>Click <strong>Mic: Off</strong> in the top header. Your voice plays live through the speakers with authentic karaoke echo! <em>(Headphones recommended to avoid feedback)</em>.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-num">3</span>
+              <div class="step-icon">✨</div>
+              <h4>Adjust Vocals</h4>
+              <p>Want only instruments? Leave <strong>Vocal Reducer</strong> at <code>0%</code>. Want backup singers to help you? Slide to <code>25%</code> for Guide Vocals.</p>
+            </div>
+            <div class="guide-step-card">
+              <span class="step-num">4</span>
+              <div class="step-icon">🔴</div>
+              <h4>Record Your Take</h4>
+              <p>Click <strong>Record Take</strong> to record your voice singing over the track. When you finish, listen back and download your performance!</p>
+            </div>
+          </div>
+          <div class="guide-shortcuts-bar">
+            <span>⌨️ <strong>Keyboard Shortcuts:</strong> Spacebar = Play/Pause &bull; Left/Right Arrows = Skip 5s &bull; Click any lyric to jump</span>
+          </div>
+          <div class="modal-actions">
+            <button id="gotItBtn" class="primary-btn">Let's Sing! 🎤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Toast Notification System -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Hidden audio elements -->
+    <audio id="karaokeAudio" preload="auto" crossorigin="anonymous"></audio>
+    <audio id="originalAudio" preload="auto" crossorigin="anonymous"></audio>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

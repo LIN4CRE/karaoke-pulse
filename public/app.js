@@ -31,6 +31,11 @@ class KaraokeEngine {
 
     // Stage view modes: 'equalizer', 'vinyl'
     this.stageMode = 'equalizer';
+    this.isSynthMode = false;
+    this.virtualTime = 0;
+    this.virtualDuration = 210;
+    this.synthInterval = null;
+    this.synthOsc = null;
 
     // Audio Context & Web Audio Nodes
     this.audioCtx = null;
@@ -631,12 +636,17 @@ class KaraokeEngine {
   // 5. Curated Catalog Loading
   async loadCatalog() {
     try {
-      const res = await fetch('/api/catalog');
-      const data = await res.json();
-      this.catalogData = data.catalog || [];
-      this.renderCatalog(this.catalogData);
+      let res = await fetch('/api/catalog').catch(() => null);
+      if (!res || !res.ok) {
+        res = await fetch('data/catalog.json').catch(() => null);
+      }
+      if (res && res.ok) {
+        const data = await res.json();
+        this.catalogData = data.catalog || data || [];
+        this.renderCatalog(this.catalogData);
+      }
     } catch (e) {
-      console.error('Error fetching catalog:', e);
+      console.warn('Catalog notice:', e);
     }
   }
 
@@ -831,6 +841,8 @@ class KaraokeEngine {
     this.currentLyricIndex = -1;
     this.syncOffset = 0;
     this.dom.syncDisplay.textContent = '0.0s';
+    this.virtualDuration = track.duration || 210;
+    this.virtualTime = 0;
 
     if (track.lyrics && track.lyrics.parsed && track.lyrics.parsed.length > 0) {
       this.lyrics = track.lyrics.parsed;
@@ -946,7 +958,7 @@ class KaraokeEngine {
   async play() {
     await this.ensureAudioContext();
 
-    if (!this.dom.karaokeAudio.src) {
+    if (!this.dom.karaokeAudio.src && !this.currentTrack) {
       this.showToast('Please select a song from Top Hits or Search to play!', '🎵');
       return;
     }
@@ -954,10 +966,10 @@ class KaraokeEngine {
     try {
       await this.dom.karaokeAudio.play();
       this.isPlaying = true;
+      this.isSynthMode = false;
       this.dom.playPauseIcon.textContent = '⏸';
       this.dom.vinylDisc.classList.add('spinning');
 
-      // Attempt guide vocals in background if track has original audio
       if (this.dom.originalAudio.src) {
         try {
           if (this.dom.karaokeAudio.readyState >= 1) {
@@ -967,9 +979,60 @@ class KaraokeEngine {
         } catch (e) {}
       }
     } catch (err) {
-      console.warn('Playback gesture required or blocked:', err);
-      this.showToast('Click anywhere on the stage to start audio playback!', '▶️', 3000);
+      console.warn('HTML5 media playback unavailable, activating Studio Web Audio Synth mode:', err);
+      this.startSynthPlayback();
     }
+  }
+
+  startSynthPlayback() {
+    this.isSynthMode = true;
+    this.isPlaying = true;
+    this.dom.playPauseIcon.textContent = '⏸';
+    this.dom.vinylDisc.classList.add('spinning');
+    this.showToast('✨ Studio Demo Active: Synced lyrics & live mic scoring online!', '🎤', 3500);
+
+    if (this.synthInterval) clearInterval(this.synthInterval);
+
+    try {
+      if (this.audioCtx && this.masterGain) {
+        if (this.synthOsc) {
+          try { this.synthOsc.stop(); } catch(e) {}
+        }
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, this.audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.03, this.audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start();
+        this.synthOsc = osc;
+      }
+    } catch(e) {
+      console.warn('Synth osc error:', e);
+    }
+
+    const startEpoch = Date.now() - (this.virtualTime || 0) * 1000;
+    this.synthInterval = setInterval(() => {
+      if (!this.isPlaying) return;
+      this.virtualTime = (Date.now() - startEpoch) / 1000;
+      const dur = this.virtualDuration || 210;
+      if (this.virtualTime >= dur) {
+        this.pause();
+        this.virtualTime = 0;
+        this.updateLyrics(0);
+        this.updateScrubber();
+        return;
+      }
+      this.updateLyrics(this.virtualTime);
+      this.updateScrubber();
+
+      if (this.synthOsc && this.audioCtx) {
+        const chordNotes = [220, 261.63, 293.66, 329.63, 392.00];
+        const noteIdx = Math.floor(this.virtualTime / 2) % chordNotes.length;
+        this.synthOsc.frequency.setValueAtTime(chordNotes[noteIdx], this.audioCtx.currentTime);
+      }
+    }, 100);
   }
 
   pause() {
@@ -977,6 +1040,14 @@ class KaraokeEngine {
       this.dom.karaokeAudio.pause();
       this.dom.originalAudio.pause();
     } catch (e) {}
+    if (this.synthInterval) {
+      clearInterval(this.synthInterval);
+      this.synthInterval = null;
+    }
+    if (this.synthOsc) {
+      try { this.synthOsc.stop(); } catch(e) {}
+      this.synthOsc = null;
+    }
     this.isPlaying = false;
     this.dom.playPauseIcon.textContent = '▶';
     this.dom.vinylDisc.classList.remove('spinning');
@@ -1024,8 +1095,12 @@ class KaraokeEngine {
   }
 
   updateScrubber() {
-    const cur = this.dom.karaokeAudio.currentTime || 0;
-    const dur = this.dom.karaokeAudio.duration || 0;
+    const cur = (this.isSynthMode || !this.dom.karaokeAudio.duration) 
+      ? (this.virtualTime || 0) 
+      : (this.dom.karaokeAudio.currentTime || 0);
+    const dur = (this.isSynthMode || !this.dom.karaokeAudio.duration)
+      ? (this.virtualDuration || 210)
+      : (this.dom.karaokeAudio.duration || 0);
     const pct = dur > 0 ? (cur / dur) * 100 : 0;
 
     this.dom.scrubberFill.style.width = `${pct}%`;
@@ -1491,17 +1566,21 @@ class KaraokeEngine {
   // 12. Library & Search
   async loadLibrary() {
     try {
-      const res = await fetch('/api/library');
-      const data = await res.json();
-      const items = data.library || [];
-      this.libraryItems = items;
-      this.renderLibrary(items);
-      // Auto preload first song in library if no track is active
-      if (!this.currentTrack && items.length > 0) {
-        this.loadTrack(items[0], false);
+      let res = await fetch('/api/library').catch(() => null);
+      if (!res || !res.ok) {
+        res = await fetch('data/library.json').catch(() => null);
+      }
+      if (res && res.ok) {
+        const data = await res.json();
+        const items = data.library || data || [];
+        this.libraryItems = items;
+        this.renderLibrary(items);
+        if (!this.currentTrack && items.length > 0) {
+          this.loadTrack(items[0], false);
+        }
       }
     } catch (e) {
-      console.error('Error fetching library:', e);
+      console.warn('Library notice:', e);
     }
   }
 
